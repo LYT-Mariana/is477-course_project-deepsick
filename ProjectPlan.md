@@ -83,10 +83,10 @@ Our team is composed of two undergraduate students collaborating to investigate 
 
 | Member | Role | Responsibilities |
 |:--|:--|:--|
-| **Yutong Liu** | Project Manager | Oversees the project timeline, ensures each stage is completed as planned, and manages overall progress to keep the project on track. |
-| **Yutong Liu** | Data Preprocessor | Collects raw data from both sources (FBI SRS and NCES CCD), handles data integration and cleaning, and ensures consistent formatting across years. |
-| **Yutong Liu** | Data Analyst | Performs statistical analysis and modeling to evaluate relationships between education indicators and crime rates, generating insights from the integrated dataset. |
-| **Yutong Liu** | Reporter | Writes summaries and interprets results, connects findings to the research questions, and compiles the final report and presentation. |
+| **Yutong Liu** **Bowei Wang**| Project Manager | Oversees the project timeline, ensures each stage is completed as planned, and manages overall progress to keep the project on track. |
+| **Yutong Liu** **Bowei Wang**| Data Preprocessor | Collects raw data from both sources (FBI SRS and NCES CCD), handles data integration and cleaning, and ensures consistent formatting across years. |
+| **Yutong Liu** **Bowei Wang**| Data Analyst | Performs statistical analysis and modeling to evaluate relationships between education indicators and crime rates, generating insights from the integrated dataset. |
+| **Yutong Liu** **Bowei Wang**| Reporter | Writes summaries and interprets results, connects findings to the research questions, and compiles the final report and presentation. |
 
 Each member will also participate in weekly check-ins to review milestones, verify data integrity, and ensure analytical consistency.
 
