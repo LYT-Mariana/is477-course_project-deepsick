@@ -1,14 +1,14 @@
 ## Overview
 
-This project investigates how education levels and school system characteristics relate to crime rates across U.S. states. By integrating two official federal datasets — the **FBI Uniform Crime Reporting (UCR) Program** and the **NCES Common Core of Data (CCD)** — we aim to explore whether variations in education indicators (such as graduation rates and student–teacher ratios) correspond with differences in violent and property crime rates over time.
+In this project, we will investigate how education levels and school system characteristics relate to crime rates across U.S. states. By integrating two official federal datasets — the **FBI Uniform Crime Reporting (UCR) Program** and the **NCES Common Core of Data (CCD)** — we aim to explore whether variations in education indicators correspond with differences in violent and property crime rates over time.
 
 ### Motivation
-Education and public safety are deeply intertwined aspects of social well-being. While policymakers often treat them as separate domains, empirical evidence suggests that educational opportunities can influence community stability and long-term crime trends. By bringing these data sources together, we aim to provide a data-driven view of how state-level education metrics align with reported crime patterns.
+Education and public safety are deeply intertwined aspects of social well-being. While policymakers often treat them as separate domains, evidence suggests that educational opportunities can influence community stability and long-term crime trends. By bringing these data sources together, we aim to provide a data-driven view of how state-level education metrics align with reported crime patterns.
 
 ### Scope
-We will focus on state-level data from recent years (2015–2024) to ensure compatibility between datasets. Crime data will be obtained from the **FBI Crime Data Explorer (UCR)**, which reports annual state crime counts and rates for categories such as violent crime, property crime, and burglary. Education data will be drawn from the **NCES CCD State Nonfiscal Survey**, which provides comparable annual measures of graduation rates, enrollment, teacher counts, and student–teacher ratios.
+We will focus on state-level data from past ten years (2015–2024) to ensure compatibility between datasets. Crime data will be obtained from the **FBI Crime Data Explorer (UCR)**, which reports annual state crime counts and rates for categories such as violent crime, property crime and burglary. Education data will be obtained from the **NCES CCD State Nonfiscal Survey**, which provides comparable annual measures of graduation rates, enrollment, teacher counts and student–teacher ratios.
 
-These datasets will be harmonized by state name and reporting year to construct a combined analytical dataset. Statistical summaries, correlations, and visualizations will be used to characterize the relationship between education and crime. We will also consider potential confounders such as population size and reporting differences.
+These datasets will be connected by state name and reporting year to construct a combined analytical dataset. Statistical summaries, correlations, and visualizations will be used to characterize the relationship between education and crime. We will also consider potential confounders such as population size and reporting differences.
 
 ### Expected Contributions
 - A reproducible dataset integrating **FBI UCR crime data** and **NCES CCD education data** by state and year.
@@ -23,7 +23,7 @@ This project is guided by the following research questions:
 1. **How do education levels relate to crime rates across U.S. states?**  
    - Specifically, do states with higher high-school graduation rates or lower student–teacher ratios exhibit lower violent or property crime rates?
 
-2. **How have these relationships changed over time (2015–2023)?**  
+2. **How have these relationships changed over time (2015–2024)?**  
    - Are trends in education improvement associated with declining crime, or do they vary by crime type or region?
 
 3. **Which education factors appear most strongly correlated with crime outcomes?**  
@@ -34,7 +34,7 @@ This project is guided by the following research questions:
 
 ### Analytical Framing
 Each question will be approached through descriptive statistics, correlation and regression analysis, and geographic or temporal visualization.  
-Our focus is on **association, not causation**: the goal is to reveal measurable patterns between education metrics and crime rates rather than to claim direct effects.
+Our focus is on **association, not causation**: the goal is to find measurable patterns between education metrics and crime rates rather than claiming direct effects.
 
 ## Datasets
 
@@ -73,20 +73,20 @@ Our analysis will combine two publicly available, state-level datasets to explor
   The education data will be used to construct metrics such as student-teacher ratio and total enrollment per state per year.  
 
 ### Integration Plan
-The two datasets will be merged on matching state and year fields (`state_name` ↔ `STATE`, `data_year` ↔ `SCHOOL_YEAR`). The combined dataset (2015–2024) will support regression and correlation analyses to assess how education indicators (e.g., student-teacher ratio, enrollment size) relate to crime rates across U.S. states.
+The two datasets will be merged on matching state and year fields (`state_name` ↔ `STATE`, `data_year` ↔ `SCHOOL_YEAR`). The combined dataset (2015–2024) will support regression and correlation analyses to assess how education indicators relate to crime rates across U.S. states.
 
 ## Team and Timeline
 
 ### Team
 
-Our team is composed of undergraduate students collaborating to investigate the relationship between education levels and crime rates across U.S. states (2015–2024). Each member has a distinct role to ensure smooth progress from data collection to analysis and presentation.
+Our team is composed of two undergraduate students collaborating to investigate the relationship between education levels and crime rates across U.S. states (2015–2024). Each member has a distinct role to ensure smooth progress from data collection to analysis and presentation.
 
 | Member | Role | Responsibilities |
 |:--|:--|:--|
-| **Yutong Liu** | Project Lead & Data Integration | Coordinates project timeline, manages datasets, and performs data cleaning and merging between the FBI SRS and NCES CCD data. |
-| **[Teammate 1 Name]** | Data Collection & Preprocessing | Downloads raw datasets (crime and education), documents metadata, and ensures consistent formatting across years. |
-| **[Teammate 2 Name]** | Statistical Analysis & Modeling | Develops regression and correlation analyses to evaluate relationships between education indicators (e.g., student-teacher ratio) and crime rates. |
-| **[Teammate 3 Name]** | Visualization & Reporting | Creates visualizations (heatmaps, line charts, choropleth maps) and contributes to the written report and final presentation. |
+| **Yutong Liu** | Project Manager | Oversees the project timeline, ensures each stage is completed as planned, and manages overall progress to keep the project on track. |
+| **Yutong Liu** | Data Preprocessor | Collects raw data from both sources (FBI SRS and NCES CCD), handles data integration and cleaning, and ensures consistent formatting across years. |
+| **Yutong Liu** | Data Analyst | Performs statistical analysis and modeling to evaluate relationships between education indicators and crime rates, generating insights from the integrated dataset. |
+| **Yutong Liu** | Reporter | Writes summaries and interprets results, connects findings to the research questions, and compiles the final report and presentation. |
 
 Each member will also participate in weekly check-ins to review milestones, verify data integrity, and ensure analytical consistency.
 
@@ -96,25 +96,23 @@ Each member will also participate in weekly check-ins to review milestones, veri
 
 | Week | Task | Description | Responsible |
 |:--:|:--|:--|:--|
-| **Week 1 (Current)** | **Finalize Research Focus & Datasets** | Confirm data sources (FBI SRS + NCES CCD) and define research question. | Entire Team |
-| **Week 2** | **Data Collection & Cleaning** | Download and standardize education and crime data (2015–2024), remove missing or inconsistent entries. | Yutong, [Teammate 1] |
-| **Week 3** | **Data Integration** | Merge FBI and NCES datasets by state and year; compute derived variables (crime per capita, student-teacher ratio). | Yutong |
-| **Week 4** | **Exploratory Analysis & Visualization** | Conduct descriptive analysis and create visual summaries of state-level patterns. | [Teammate 2], [Teammate 3] |
-| **Week 5** | **Modeling & Interpretation** | Fit regression models and interpret the relationship between education and crime rates. | [Teammate 2] |
-| **Week 6** | **Draft Report & Presentation** | Write initial analysis report, prepare slides and visuals. | [Teammate 3] |
-| **Week 7** | **Final Revisions** | Review, refine, and submit final project with complete documentation and results. | Entire Team |
+| **Week 1** | **Finalize Research Focus & Data Sources** | Define research questions, select final datasets (FBI SRS + NCES CCD), and outline project scope. | Project Manager & Entire Team |
+| **Week 2** | **Data Collection & Preprocessing** | Download raw data files, clean and standardize variables, and ensure alignment between education and crime datasets. | Data Preprocessor |
+| **Week 3** | **Data Integration & Feature Creation** | Merge the two datasets by state and year, compute derived metrics, and validate data accuracy. | Project Manager & Data Preprocessor |
+| **Week 4** | **Analysis & Visualization** | Perform statistical and correlation analysis to explore relationships between education indicators and crime rates; produce charts and tables. | Data Analyst & Reporter |
+| **Week 5** | **Reporting & Final Presentation** | Interpret analytical results, answer research questions clearly, and compile the final report and presentation slides. | Reporter & Project Manager |
 
 ---
 
 **Communication Plan:**  
-- Weekly progress meetings (in-person or virtual)  
-- Shared Google Drive folder for dataset versions and R scripts  
+- Weekly progress meetings (virtual)  
+- Shared Google Drive folder for dataset versions and Python scripts  
 - GitHub repository for reproducible code and documentation  
 - Chat group for daily coordination and issue tracking
 
 ## Constraints and Gaps
 
-Although our proposed project leverages reputable public datasets, several limitations may affect the scope, accuracy, and interpretability of our results.
+Although our proposed project leverages reputable public datasets, several limitations may affect the scope, accuracy and interpretability of our results.
 
 ### 1. Data Availability and Consistency
 - **Temporal gaps:** The FBI and NCES datasets may not align perfectly by year; for instance, NCES data are organized by *school year* (e.g., 2023–24), while FBI data use *calendar year* (e.g., 2023). We will address this by aligning school years with the corresponding calendar year.
@@ -122,8 +120,8 @@ Although our proposed project leverages reputable public datasets, several limit
 - **Variable definitions:** Education variables such as “full-time equivalent teachers” or “membership counts” may have slight definitional changes across years, which can introduce subtle biases when measuring trends from 2015–2024.
 
 ### 2. Measurement and Methodological Constraints
-- **Aggregated data:** Both datasets are state-level summaries, so our analysis cannot capture within-state disparities (e.g., between urban and rural areas). The results will reflect *broad correlations*, not individual or district-level causation.
-- **Causality limitations:** Correlation between education levels and crime rates does not imply a causal relationship. External socioeconomic and policy factors—such as income, unemployment, or policing strategies—may mediate or confound observed associations.
+- **Aggregated data:** Both datasets are state-level summaries, so our analysis cannot capture within-state disparities (e.g., difference between urban and rural areas). The results will reflect *broad correlations*, not individual or district-level causation.
+- **Causality limitations:** Correlation between education levels and crime rates does not imply a causal relationship. External socioeconomic and policy factors (e.g., income, unemployment, or policing strategies) may mediate or confound observed associations.
 - **Scaling differences:** The FBI and NCES datasets use different population bases (total residents vs. enrolled students), requiring normalization (e.g., per 100,000 residents or per 1,000 students) to ensure comparability.
 
 ### 3. Ethical and Interpretive Considerations
