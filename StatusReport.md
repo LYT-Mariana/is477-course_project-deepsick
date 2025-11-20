@@ -100,7 +100,7 @@ This report includes project updates, an updated timeline, changes to the origin
 | Data Integration | Week 8 | ✔ Completed | — |
 | Exploratory Data Analysis (EDA) | Week 12 | Not Started | Fall Break |
 | Modeling & Statistical Analysis | Week 13 | Not Started | Fall Break |
-| Ethics & Provenance | Week 10 | Not Started | Fall Brea |
+| Ethics & Provenance | Week 10 | Not Started | Fall Break |
 | Final Report & Presentation | Week 15 | Not Started | Fall Break |
 
 ---
