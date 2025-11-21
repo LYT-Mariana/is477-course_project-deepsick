@@ -1,5 +1,5 @@
 # Status Report — Interim Project Update (Milestone 3)
-**Author:** Yutong Liu  
+**Author:** Yutong Liu, Bowei Wang
 **Course:** IS 477 — Data Management, Curation & Reproducibility  
 **Project:** Crime & Education Data Integration and Analysis  
 **Date:** November 2025  
