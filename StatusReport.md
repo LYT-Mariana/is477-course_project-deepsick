@@ -121,9 +121,7 @@ More time was allocated to profiling and integration than expected, shifting aut
 
 ---
 
-# 5. Individual Contribution Summary (Yutong Liu)
-
-I was responsible for all tasks, including:
+# 5. Individual Contribution Summary (Yutong Liu, Bowei Wang)
 
 - Downloading and organizing raw datasets  
 - Writing all profiling and cleaning notebooks  
@@ -136,7 +134,6 @@ I was responsible for all tasks, including:
 - Producing this Status Report  
 - Preparing for analysis, modeling, and final evaluation  
 
----
 
 # 6. Next Steps
 
