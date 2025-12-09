@@ -7,6 +7,7 @@
 
 ## 1. Summary
 
+### 1.1 Project Introduction
 This project investigates how state-level education characteristics relate to crime rates across the United States. We integrate two official federal datasets—the FBI Uniform Crime Reporting (UCR) **Summary Reporting System (SRS)** and the National Center for Education Statistics (NCES) **Common Core of Data (CCD) SEA state-level files**—to construct a reproducible dataset that links crime metrics with public-school staffing indicators for each state and year.
 
 Our motivation is that education and public safety are deeply connected aspects of social well-being, yet they are often addressed separately in policy and public debate. Educational opportunities, staffing levels, and school resources can shape community stability, while crime affects both student outcomes and local school systems. Rather than making causal claims, our goal is to provide a transparent, data-driven view of how these systems move together over time.
@@ -22,6 +23,45 @@ Our main contributions are:
 - A transparent discussion of data quality issues and limitations, especially the sparsity and definitional complexity of education data.
 
 Throughout the project we emphasize association rather than causation. We frame our research questions around patterns and correlations: Do states with higher staffing levels show lower crime rates? How have crime rates and staff totals moved over time? Are there clear regional differences? By making our workflow and assumptions explicit, the project aims to support informed interpretation and future extensions rather than definitive policy prescriptions.
+
+### 1.2 Ethical, Privacy, and Legal Considerations
+
+Both the FBI SRS and NCES CCD SEA datasets are **public, aggregate, non-PII datasets**, meaning they contain no personal identifiers and pose minimal privacy risk. Nonetheless, ethical and legal considerations remain important.
+
+
+### **Data Licensing and Terms of Use**
+
+- **FBI Crime Data Explorer** provides downloadable datasets intended for public use, subject to attribution and use within reasonable analytical contexts.
+- **NCES CCD data** are governed by the Department of Education, which permits reuse for statistical and research purposes.  
+  We adhere to these terms by maintaining attribution, avoiding any attempt to re-identify individuals, and using the datasets solely for educational research.
+
+
+### **Representation and Bias**
+
+Although both datasets are official and comprehensive, they contain structural biases:
+
+- FBI reporting depends on local law enforcement agencies’ participation, which varies by state and year.
+- Education staffing data show inconsistencies in reporting practices, and many demographic breakdowns are missing for most states.
+
+We explicitly avoid causal claims and acknowledge that measurement artifacts may influence observed patterns.
+
+
+### **Data Quality and Transparency**
+
+All cleaning decisions (e.g., dropping high-missing columns, removing territories, aggregating staff totals)  
+are documented in notebooks and justified in this report.
+
+We preserve raw files to support full auditability.
+
+
+### **Provenance and Reproducibility**
+
+- Each NCES row includes its origin ZIP file as a `source_file` tag, ensuring traceability.
+- All transformation steps are scripted in notebooks, and the workflow can be reproduced with the provided instructions.
+
+
+**Overall, this project prioritizes transparency, responsible use of public data, and clear communication of limitations.**
+
 
 ---
 
