@@ -29,14 +29,14 @@ Throughout the project we emphasize association rather than causation. We frame 
 Both the FBI SRS and NCES CCD SEA datasets are **public, aggregate, non-PII datasets**, meaning they contain no personal identifiers and pose minimal privacy risk. Nonetheless, ethical and legal considerations remain important.
 
 
-### **Data Licensing and Terms of Use**
+#### **Data Licensing and Terms of Use**
 
 - **FBI Crime Data Explorer** provides downloadable datasets intended for public use, subject to attribution and use within reasonable analytical contexts.
 - **NCES CCD data** are governed by the Department of Education, which permits reuse for statistical and research purposes.  
   We adhere to these terms by maintaining attribution, avoiding any attempt to re-identify individuals, and using the datasets solely for educational research.
 
 
-### **Representation and Bias**
+#### **Representation and Bias**
 
 Although both datasets are official and comprehensive, they contain structural biases:
 
@@ -46,7 +46,7 @@ Although both datasets are official and comprehensive, they contain structural b
 We explicitly avoid causal claims and acknowledge that measurement artifacts may influence observed patterns.
 
 
-### **Data Quality and Transparency**
+#### **Data Quality and Transparency**
 
 All cleaning decisions (e.g., dropping high-missing columns, removing territories, aggregating staff totals)  
 are documented in notebooks and justified in this report.
@@ -54,7 +54,7 @@ are documented in notebooks and justified in this report.
 We preserve raw files to support full auditability.
 
 
-### **Provenance and Reproducibility**
+#### **Provenance and Reproducibility**
 
 - Each NCES row includes its origin ZIP file as a `source_file` tag, ensuring traceability.
 - All transformation steps are scripted in notebooks, and the workflow can be reproduced with the provided instructions.
@@ -62,6 +62,45 @@ We preserve raw files to support full auditability.
 
 **Overall, this project prioritizes transparency, responsible use of public data, and clear communication of limitations.**
 
+
+### 1.3 Data Lifecycle Framework
+
+This project follows the **Wiggins & Vanderhoof Data Lifecycle Model**, which structures data work into six iterative stages: *Plan, Acquire, Process, Analyze, Preserve,* and *Share*. Aligning our workflow to this model ensures transparency, methodological consistency, and reproducibility.
+
+
+#### **Plan**
+We begin by defining the research scope: analyzing associations between education staffing indicators and crime rates across U.S. states. This determines our data needs—state-level crime statistics from the FBI SRS and staff-level education data from the NCES CCD SEA files.
+
+
+#### **Acquire**
+Data are obtained from two authoritative federal sources.
+
+- FBI data are downloaded as a single CSV containing annual crime statistics.  
+- NCES CCD SEA data consist of multiple ZIP archives per year, each containing staffing tables.
+
+We preserve the raw files in `data/raw/` without modification to maintain provenance.
+
+
+#### **Process**
+Both datasets undergo structured profiling and cleaning.
+
+- FBI data require removal of invalid rows, territories, and inconsistent fields such as legacy/revised rape categories.  
+- NCES data require extraction, consolidation across years, removal of 95%+ missing columns, filtering to valid state entries, and construction of a consistent `edu_staff_total` variable.  
+  All transformations are implemented in Jupyter notebooks to allow step-by-step verification.
+
+
+#### **Analyze**
+We integrate both datasets on `state` and `year`, compute per-capita crime metrics, and generate descriptive summaries, time series plots, and correlation matrices. Analyses follow an exploratory approach focused on association rather than prediction or causation.
+
+
+#### **Preserve**
+All cleaned datasets are saved to `data/cleaned/`, accompanied by metadata and documentation.  
+Intermediate artifacts (profiling output, figures, merged datasets) are versioned through the Git repository.
+
+
+#### **Share**
+The final deliverables include notebooks, cleaned data files, and this README as a complete, reproducible package.  
+All code and documentation follow open, transparent principles that enable users to repeat the workflow end-to-end.
 
 ---
 
