@@ -534,6 +534,8 @@ File: `notebooks/analysis.ipynb`
 
 ### 6.4 Expected Outputs
 
+**Access Output Data:** https://uofi.box.com/s/0d68jriwp8o4273kxa7worrkrsfixkhw
+
 After running all notebooks, you should have:
 
 data/cleaned/
