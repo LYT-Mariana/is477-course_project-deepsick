@@ -7,21 +7,90 @@
 
 ## 1. Summary
 
+### 1.1 Project Introduction
 This project investigates how state-level education characteristics relate to crime rates across the United States. We integrate two official federal datasets—the FBI Uniform Crime Reporting (UCR) **Summary Reporting System (SRS)** and the National Center for Education Statistics (NCES) **Common Core of Data (CCD) SEA state-level files**—to construct a reproducible dataset that links crime metrics with public-school staffing indicators for each state and year.
 
-Our motivation is that education and public safety are deeply connected aspects of social well-being, yet they are often addressed separately in policy and public debate. Educational opportunities, staffing levels, and school resources can shape community stability, while crime affects both student outcomes and local school systems. Rather than making causal claims, our goal is to provide a transparent, data-driven view of how these systems move together over time.
+Our motivation is that education and public safety are deeply connected aspects of social well-being, yet they are often addressed separately in policy and public debate. Educational opportunities, staffing levels, and school resources can influence community stability, while crime affects both student outcomes and local school systems. Rather than making causal claims, our goal is to provide a transparent, data-driven view of how these systems move together over time.
 
-The analysis focuses on the overlapping years **2015, 2017, 2019, and 2021**, which are the only years where both FBI and NCES data are simultaneously available after cleaning. For each state and year, we derive per-capita crime rates (e.g., violent crimes per 100,000 residents) and aggregate education staff totals. We then compute descriptive statistics, visualize temporal trends, and examine pairwise correlations to see whether differences in education indicators correspond to differences in violent and property crime rates.
+The analysis focuses on the overlapping years **2015, 2017, 2019, and 2021**, which are the only years where both FBI and NCES data are simultaneously available after cleaning. Because the CCD SEA files contain more than 350 staffing subcategories—over **95% of which exhibit extreme missingness or inconsistent reporting across states and years**—we retain only the consistently reported aggregate indicator `edu_staff_total` as our education variable. This decision is documented and justified to maintain comparability and interpretability across years.
+
+For each state and year, we derive per-capita crime rates (e.g., violent crimes per 100,000 residents) and education staff totals. We then compute descriptive statistics, visualize temporal trends, and examine pairwise correlations to see whether differences in education indicators correspond to differences in violent and property crime rates.
+
+To clarify the analytical scope, we frame our study around the following descriptive research questions:
+
+- How do violent and property crime rates vary across states and over time?
+- How do education staffing levels vary across states and across years?
+- Are higher staffing levels associated with lower per-capita crime rates?
+- How stable or noisy are these associations across the four overlapping years?
 
 Our main contributions are:
 
 - A **cleaned crime dataset** derived from the FBI SRS file, with territories removed and standardized per-capita crime metrics.
-- A **cleaned education dataset** from the CCD SEA state files, aggregating staffing indicators into a single, consistently reported measure (`edu_staff_total`).
-- A **merged state-year dataset** (`data/merged.csv`) covering 204 state-year observations across four years.
-- A set of **Python notebooks** that implement the full workflow: profiling, cleaning, integration, and exploratory analysis.
-- A transparent discussion of data quality issues and limitations, especially the sparsity and definitional complexity of education data.
+- A **cleaned education dataset** from the CCD SEA files, aggregating multiple staffing tables into a single, consistently reported measure (`edu_staff_total`).
+- A **merged state-year dataset** (`data/merged.csv`) containing 204 state-year observations across four years.
+- A set of **Python notebooks** that implement the full workflow: profiling, cleaning, integration, documentation, and exploratory analysis.
+- A transparent discussion of data quality issues and limitations, especially the sparsity, definitional variation, and reporting differences in education data.
 
-Throughout the project we emphasize association rather than causation. We frame our research questions around patterns and correlations: Do states with higher staffing levels show lower crime rates? How have crime rates and staff totals moved over time? Are there clear regional differences? By making our workflow and assumptions explicit, the project aims to support informed interpretation and future extensions rather than definitive policy prescriptions.
+Throughout the project we emphasize association rather than causation. Administrative datasets such as SRS and CCD reflect reporting processes that vary across jurisdictions, and observed patterns may be shaped by confounding factors such as socioeconomic conditions or policy differences. By making our workflow and assumptions explicit, the project aims to support informed interpretation and future extensions rather than definitive policy prescriptions.
+
+---
+
+### 1.2 Ethical, Privacy, and Legal Considerations
+
+Both the FBI SRS and NCES CCD SEA datasets are **public, aggregate, non-PII datasets**, meaning they contain no personal identifiers and pose minimal privacy risk. Nonetheless, ethical and legal considerations remain important.
+
+#### **Data Licensing and Terms of Use**
+- **FBI Crime Data Explorer** provides downloadable datasets for public analytical use with attribution.
+- **NCES CCD** authorizes reuse for statistical and research purposes.  
+  We adhere to these terms by maintaining attribution, avoiding re-identification attempts, and limiting use to educational analysis.
+
+#### **Representation and Bias**
+Although both datasets are authoritative, they contain structural biases:
+- FBI crime statistics depend on voluntary reporting by law enforcement, which varies across agencies and years.
+- CCD education staffing data are not uniformly reported; in several years, aggregate staff totals for some states appear as zero due to incomplete SEA reporting rather than an actual absence of staff.
+
+These issues introduce noise into the merged dataset, and we explicitly avoid causal interpretations that could misrepresent the underlying social systems.
+
+#### **Data Quality and Transparency**
+All cleaning decisions (e.g., dropping high-missing columns, removing territories, aggregating staff totals) are documented in notebooks and justified in this report. Raw files are preserved to ensure full auditability and reproducibility.
+
+#### **Provenance and Reproducibility**
+- Each NCES row contains a `source_file` tag indicating the ZIP archive from which it originated.
+- All transformations are scripted in Jupyter notebooks to ensure the workflow can be repeated deterministically from the raw data.
+
+Overall, this project prioritizes transparent decision-making, responsible use of public data, and clear communication of limitations.
+
+---
+
+### 1.3 Data Lifecycle Framework
+
+This project follows the **Wiggins & Vanderhoof Data Lifecycle Model**, which structures data work into six iterative stages: *Plan, Acquire, Process, Analyze, Preserve,* and *Share*. Aligning our workflow to this model ensures transparency, methodological consistency, and reproducibility.
+
+#### **Plan**
+We begin by defining the research scope: analyzing associations between education staffing indicators and crime rates across U.S. states. This guides our selection of authoritative federal datasets with nationwide, annually reported indicators.
+
+#### **Acquire**
+Data are obtained from two trustworthy government sources:
+- The FBI SRS dataset (CSV)
+- NCES CCD SEA staffing files (ZIP archives containing CSVs)
+
+Raw files are stored verbatim under `data/raw/` to preserve provenance and ensure reproducibility.
+
+#### **Process**
+Both datasets undergo detailed profiling and structured cleaning:
+- FBI data require removal of invalid rows, territories, and inconsistent fields such as legacy/revised rape categories.
+- NCES data require multi-year extraction, consolidation across 350+ columns, removal of columns with extreme missingness, normalization of state identifiers, and aggregation into a consistent `edu_staff_total` measure.
+
+These transformations are scripted step-by-step, and each step is idempotent to guarantee repeatability.
+
+#### **Analyze**
+We integrate the crime and education datasets on `state` and `year`, compute per-capita crime metrics, and generate descriptive summaries, time series plots, and correlation matrices. Due to the limited number of overlapping years, analysis remains exploratory and descriptive rather than inferential.
+
+#### **Preserve**
+Cleaned datasets are stored under `data/cleaned/` with accompanying metadata. Figures, intermediate outputs, and notebooks are version-controlled through the Git repository.
+
+#### **Share**
+The final deliverables include cleaned data, transformation scripts, and this README, forming a complete, reproducible workflow that others can re-run end-to-end.
 
 ---
 
@@ -33,32 +102,34 @@ Throughout the project we emphasize association rather than causation. We frame 
 FBI Crime Data Explorer – Summary Reporting System (SRS), downloaded as `estimated_crimes_1979_2024.csv`.
 
 **Coverage and Structure**  
-The raw file contains annual crime statistics for U.S. states, the District of Columbia, and several territories from **1979 to 2024**. Key columns include:
+The raw SRS file provides annual crime counts for U.S. states, the District of Columbia, and several territories from **1979 to 2024**. Key columns include:
 
 - `year` – calendar year of record  
-- `state_abbr` – two-letter state abbreviation  
-- `state_name` – full state name  
+- `state_abbr`, `state_name` – jurisdiction identifiers  
 - `population` – estimated state population  
-- `violent_crime` – total violent crimes  
-- `homicide` – murders and non-negligent manslaughter  
-- `robbery`, `aggravated_assault` – major violent crime categories  
-- `property_crime`, `burglary`, `larceny`, `motor_vehicle_theft` – property crime counts  
-- `caveats`, `rape_legacy`, `rape_revised` – auxiliary or definition-dependent fields  
+- `violent_crime`, `homicide`, `robbery`, `aggravated_assault` – major violent crime categories  
+- `property_crime`, `burglary`, `larceny`, `motor_vehicle_theft` – property crime categories  
+- `caveats`, `rape_legacy`, `rape_revised` – auxiliary or definition-sensitive fields  
 
-After cleaning, we retain **50 states + D.C.** and restrict the period to **2015–2021**, which is sufficient to cover our overlapping years with NCES education data. We compute several derived variables:
+The rape-related fields are dropped because the FBI transitioned from the legacy to revised definition during the 2010s. Many states report only one version, making the two fields **not comparable across states or years**. We keep only fields with complete reporting consistency.
+
+Following cleaning, we retain **50 states + D.C.** and restrict the period to **2015–2021**, matching the years for which education data are available. We compute derived per-capita indicators:
 
 - `violent_crime_rate` = violent_crime / population × 100,000  
 - `property_crime_rate` = property_crime / population × 100,000  
 - `homicide_rate`, `robbery_rate`, `aggravated_assault_rate` defined analogously  
 
-These rates allow meaningful comparisons across states with very different population sizes.
+These standardized rates ensure comparability across states with different population sizes and are stored directly in the cleaned dataset to guarantee reproducible calculations.
+
+**Data Limitations**  
+Crime reporting varies by jurisdiction. The FBI data depend on voluntary participation of state and local agencies, and reporting completeness fluctuates across years. State-level aggregates therefore reflect **administrative reporting patterns**, not necessarily true crime incidence. These limitations motivate our decision to treat the analysis as descriptive rather than causal.
 
 **Use in Analysis**  
-The cleaned crime dataset (saved as `data/cleaned/crime_cleaned.csv`) is used to:
+The cleaned crime dataset (`data/cleaned/crime_cleaned.csv`) is used to:
 
-- Describe state-level crime levels and trends over time.
-- Provide per-capita crime rates for correlation analysis.
-- Serve as the main outcome variables in exploratory regression and visualization.
+- Summarize crime levels and trends across states.  
+- Produce per-capita crime rates for correlation analysis.  
+- Serve as the outcome variables in exploratory visualizations and comparisons.
 
 ---
 
@@ -73,49 +144,62 @@ NCES Common Core of Data – SEA State-Level Nonfiscal Survey Data, downloaded f
 - 2021–2022 (`21-22`)  
 - 2023–2024 (`23-24`)  
 
-Each year’s folder contains two ZIP archives corresponding roughly to **staffing** and **membership** tables. We focus on the SEA staffing files and extract their CSVs programmatically.
+Each survey year includes two ZIP files representing **staffing** and **membership** tables. We extract all staffing CSVs programmatically to ensure transparent and reproducible ingestion.
 
 **Coverage and Structure**  
-The merged raw education dataset contains **62,841 rows** and **357 columns**. Important fields include:
+The merged raw education dataset contains **62,841 rows** and **357 columns**. Relevant variables include:
 
-- `SURVYEAR` – survey year label (e.g., “2015-2016”)  
-- `STABR` – state abbreviation (57 unique values including territories)  
-- `STATENAME` – state name  
-- `STAFF`, `SECTCH`, `ELMTCH`, `SCHSUP`, `STUSUP`, etc. – aggregate counts of teachers and staff  
-- Numerous highly specific race × grade × gender indicators  
+- `SURVYEAR` – survey year label  
+- `STABR`, `STATENAME` – state identifiers (57 unique values including territories)  
+- Staffing totals (`STAFF`, `SECTCH`, `ELMTCH`, `SCHSUP`, `STUSUP`, etc.)  
+- Hundreds of fine-grained race × gender × grade indicators  
 
-Because most of the detailed demographic columns are sparsely populated, we focus on **aggregated staffing totals** that have near-complete coverage. During cleaning we derive a numeric year field (`year`) from the folder name and keep the range **2015–2023**.
+However, **341 out of 357 fields exhibit more than 95% missingness**, and many staffing subcategories are reported only by certain states or only in certain years. These inconsistencies make the majority of variables **not analytically comparable across states or survey years**.
 
-**Cleaning and Core Variable**  
-Due to extreme missingness, 341 out of 357 columns have more than 95% missing values and are dropped. We retain a small set of robust variables and then further narrow to four core columns:
+**Cleaning and Core Variable Selection**  
+To maintain comparability, we drop extremely sparse columns and retain only robust, consistently reported indicators. We derive:
 
 - `state_fips` – numeric state code  
-- `state` – uppercase state name  
-- `edu_staff_total` – total staff count (from `STAFF`)  
-- `year` – derived numeric year  
+- `state` – uppercase state name standardized across years  
+- `edu_staff_total` – aggregated staff count from the `STAFF` column  
+- `year` – numeric year extracted from folder labels (2015–2023)  
 
-We remove rows with missing state, year, or staff totals and filter out territories such as Puerto Rico, Guam, and the Virgin Islands. The resulting cleaned education dataset (`data/cleaned/education_cleaned.csv`) contains **5,786 rows**, which are later aggregated to state-year totals.
+We remove rows with missing state identifiers, missing staff totals, or invalid territories (e.g., Puerto Rico, Guam). The cleaned dataset (`data/cleaned/education_cleaned.csv`) contains **5,786 rows**, which are later aggregated to a single record per state-year.
+
+**Why Only `edu_staff_total` Is Used**  
+Because CCD SEA reporting differs substantially across states, nearly all granular staffing categories are **not consistently defined** or **not consistently reported**. The `STAFF` field is the only aggregated staffing measure that exists across **all states and all years**, making it the only feasible, comparable education variable for our analysis.
+
+**Important Limitation: Zero Staff Totals**  
+In several survey years, some states appear with `edu_staff_total = 0`. These values do **not** indicate an absence of staff; instead, they reflect missing aggregated totals in the SEA files for that year. These zeros therefore behave as **structural missing values** and should be interpreted cautiously.
 
 **Aggregation and Use**  
-We aggregate education data to one record per state and year by summing `edu_staff_total`. This produces **204 state-year observations** for the years **2015, 2017, 2019, and 2021**. The aggregated staff totals serve as our primary education indicator, approximating the staffing capacity of public school systems.
+We aggregate the cleaned education data to one record per state and year by summing `edu_staff_total`. This yields **204 state-year observations** for **2015, 2017, 2019, and 2021**, which serve as our primary education indicator representing the staffing capacity of state public-school systems.
 
 ---
 
 ### 2.3 Integrated Dataset
 
-To study education–crime relationships, we merge the two cleaned datasets:
+To study education–crime relationships, we merge the two cleaned datasets by aligning identifiers and ensuring consistent temporal coverage.
 
-1. Align states: convert all state names to uppercase and restrict both datasets to the 50 states + D.C.  
-2. Align years: intersect the crime and education year sets. The intersection is **{2015, 2017, 2019, 2021}**.  
-3. Aggregate education data to state–year level (`edu_staff_total`).  
-4. Perform an inner join on `state` and `year`.
+**Integration Steps**
 
-The final merged dataset (`data/merged.csv`) has:
+1. **State alignment:** Convert all state names to uppercase and restrict both datasets to the 50 states + D.C.  
+2. **Year alignment:** Take the intersection of available years from each dataset → **{2015, 2017, 2019, 2021}.**  
+3. **Aggregation:** Reduce education data to one state-year record using summed `edu_staff_total`.  
+4. **Merge:** Perform an inner join on `state` and `year`.
+
+**Resulting Dataset**  
+The final merged dataset (`data/merged.csv`) includes:
 
 - **204 rows** (51 states × 4 years)  
-- **18 columns**, including crime counts, per-capita crime rates, population, and `edu_staff_total`.
+- **18 columns**, including population, crime counts, per-capita crime rates, and `edu_staff_total`.
 
-This dataset is the basis for our trend plots, correlation analysis, and summary findings.
+**Integration Limitations**  
+- Only four overlapping survey years exist, producing a **non-continuous time series** for education variables.  
+- Differences in reporting granularity across FBI and NCES systems may introduce alignment noise.  
+- Zero-staff rows inherited from CCD SEA constitute structural missing values that limit interpretability.
+
+Despite these constraints, the merged dataset offers a reproducible and transparent foundation for descriptive analysis of education–crime associations.
 
 ---
 
@@ -123,51 +207,88 @@ This dataset is the basis for our trend plots, correlation analysis, and summary
 
 ### 3.1 Crime Data Quality
 
-The crime dataset is relatively clean and complete for the years we analyze:
+Overall, the FBI crime dataset is comparatively clean and reliable for quantitative analysis. Most core variables exhibit high completeness and clear semantic definitions:
 
-- Core columns (`population`, `violent_crime`, `property_crime`, `homicide`, `robbery`, `aggravated_assault`, `burglary`, `larceny`, `motor_vehicle_theft`) have **0% missing values**.
-- The `caveats` column is 97% missing and carries only textual notes, so it is removed.
-- `rape_legacy` and `rape_revised` have mutually exclusive coverage due to definitional changes in the FBI’s rape reporting; to avoid inconsistent series, we drop them and rely on `violent_crime` instead.
-- 38 records have missing `state_name`, corresponding to national totals or improperly coded rows; these are dropped.
-- After restricting to 50 states + D.C. and years 2015–2024, the dataset contains 357 rows. Restricting further to the overlapping years with education data yields 204 rows.
+- Core columns (`population`, `violent_crime`, `property_crime`, `homicide`, `robbery`, `aggravated_assault`, `burglary`, `larceny`, `motor_vehicle_theft`) have **0% missing values** for the years we analyze.
+- The `caveats` column is **97% missing** and contains heterogeneous textual notes rather than structured information; it is removed.
+- `rape_legacy` and `rape_revised` exhibit **mutually exclusive reporting** due to the FBI’s definitional transition starting in 2013. Because states adopt the revised definition at different times, keeping either field would produce inconsistent series. We drop both and rely on the broader and consistently defined `violent_crime` category.
+- 38 rows contain missing `state_name`, corresponding to national totals, empty rows, or administrative artifacts. These are dropped to avoid double-counting and ensure each row corresponds to one identifiable jurisdiction.
 
-We detect no duplicated state–year combinations and no impossible values (e.g., negative crime counts). Per-capita rate calculations use population as the denominator and therefore rely on the FBI’s population estimates, which may have their own model-based uncertainty but are standard for cross-state comparisons.
+After cleaning and restricting to the 50 states + D.C. and years 2015–2021, the dataset contains 357 valid records; intersecting with education years yields **204 state-year rows**.
+
+**Data Validity and Structural Checks**  
+- We detect **no duplicated state–year pairs**, ensuring stable joins.
+- No negative crime counts or population values appear.
+- All per-capita crime rates are computed using the FBI’s population estimates, which are themselves model-based and may introduce uncertainty, but these denominators are standard for comparative criminological analysis.
+
+**Remaining Limitations**  
+- FBI reporting is voluntary at the agency level, and some states may have fluctuating participation over time.  
+- State-level aggregates can therefore reflect reporting coverage as much as actual crime incidence.
+
+These limitations prevent causal interpretation but do not materially harm descriptive, cross-sectional comparisons.
+
+---
 
 ### 3.2 Education Data Quality
 
-Education data quality is more challenging:
+The NCES SEA staffing data present substantial data quality challenges due to heterogeneity in reporting practices across states and years.
 
-- The merged SEA dataset includes **57 state codes**, covering the 50 states, D.C., and multiple territories and specialized agencies (e.g., Bureau of Indian Education, Department of Defense Education Activity).
-- Many columns represent detailed race-by-grade staff counts that are only reported for some states or years. Over **95% of columns** have more than 95% missing values.
-- Core identifier fields (`STABR`, `STATENAME`) and aggregated staff counts (`STAFF`) are significantly more complete.
-- We address this by dropping all high-missing columns and focusing on the more robust aggregated staff totals.
+**Key Quality Issues Identified:**
 
-Residual limitations remain:
+- The merged dataset includes **57 distinct agency codes**, combining states, territories, and special agencies (e.g., Bureau of Indian Education). Only 51 correspond to our target state-level units.
+- Of 357 columns, **341 (95%+) exhibit over 95% missingness**, largely representing fine-grained race × grade × gender staffing counts reported inconsistently across jurisdictions.
+- Core identifiers (`STABR`, `STATENAME`) are well populated, as are several high-level staffing counts (e.g., `STAFF`, `SECTCH`, `ELMTCH`), but many totals differ in definition depending on the state.
 
-- Some staff totals are zero for later years, likely reflecting changes in reporting or suppression rather than true absence of staff.
-- The SEA files capture state education agencies, which may not map perfectly onto district-level staffing; however, they still provide a reasonable proxy for statewide staff capacity.
-- Because we rely only on a single staffing indicator (`edu_staff_total`), our education representation is narrow and does not include enrollment or graduation rate.
+**Cleaning Actions and Justification**  
+To ensure comparability:
 
-Despite these limitations, our final education dataset is structurally consistent and sufficient for basic association analysis.
+- All high-missing and inconsistently defined variables are removed.
+- Only aggregated staffing totals with stable reporting across all years are retained.
+- Territories and special agencies are excluded.
+- A derived numeric `year` variable is added to ensure temporal alignment.
+
+**Residual Limitations**
+
+Despite cleaning, several quality concerns remain:
+
+1. **Zero Staff Totals**  
+   Some states report `STAFF = 0` in survey years 2017, 2019, or 2021. These values do **not** represent true zero staffing; instead, they result from SEA-level reporting omission or suppression. They function as **structural missing values** and should be interpreted accordingly.
+
+2. **Reporting Inconsistency Across States**  
+   SEA staffing definitions differ subtly across states (e.g., inclusion/exclusion of contracted personnel), reducing the semantic comparability of staff totals.
+
+3. **Limited Variable Breadth**  
+   Because only `edu_staff_total` is sufficiently complete, our representation of education systems is narrow. Staffing context such as enrollment, student–teacher ratios, or administrative breakdowns cannot be analyzed.
+
+Even with these limitations, the cleaned dataset maintains internal consistency, allowing for meaningful descriptive comparisons at the state-year level.
+
+---
 
 ### 3.3 Integration Quality
 
-Integration quality is evaluated along three dimensions:
+We evaluate integration quality along three dimensions: identifier alignment, temporal consistency, and completeness after merging.
 
-1. **Key Alignment**  
-   - State names are normalized to uppercase across both datasets.
-   - Territories and non-state agencies are removed in both data sources.
-   - After filtering, we obtain a perfect set of 51 unique states (including D.C.) in both datasets.
+#### **1. Identifier Alignment**
+- State names and abbreviations are normalized to uppercase across both datasets.
+- All non-state entities (e.g., territories, specialized agencies) are removed.
+- After filtering, both datasets contain **exactly 51 states** (50 states + D.C.), enabling a consistent one-to-one join structure.
 
-2. **Temporal Consistency**  
-   - FBI data are reported by calendar year, while CCD SEA data use survey years. We map SEA folder names (e.g., “15-16”) to the starting calendar year (2015), which is a reasonable approximation for annual comparisons.
-   - We only use years that appear in both datasets: 2015, 2017, 2019, 2021.
+#### **2. Temporal Consistency**
+- FBI data follow calendar years; NCES SEA data follow survey years (e.g., “2015–2016”).  
+  We consistently map survey-year folders to the **first calendar year** (e.g., `15-16 → 2015`), which is appropriate given the annual granularity of our analysis.
+- We restrict attention to the intersection of available years: **2015, 2017, 2019, 2021**, all of which appear in both datasets.
 
-3. **Missingness After Merge**  
-   - The merged dataset contains no missing values in the variables we use for analysis.
-   - We confirm that there is exactly one row per state-year combination.
+#### **3. Missingness After Merge**
+- The merged dataset contains **no missing values** in the retained fields.
+- We verify that each state-year pair appears exactly once.
+- The final dataset contains **204 rows** (51 states × 4 years), forming a complete, rectangular panel.
 
-Overall, while education data sparsity limits the richness of our indicators, the integrated dataset is internally consistent and suitable for exploratory analysis of associations between crime and staffing totals.
+**Integration Limitations**
+- The education data’s structural zeros propagate into the merged dataset, constraining interpretation of cross-year trends.
+- Because only four years overlap, the integrated dataset represents **discrete snapshots** rather than a continuous time series.
+- Differences in how federal agencies define and aggregate indicators may introduce subtle interoperability issues.
+
+Overall, while education data sparsity limits the analytic depth, the merged dataset is internally consistent, well-aligned across keys and years, and suitable for transparent exploratory analysis.
 
 ---
 
@@ -177,33 +298,57 @@ Overall, while education data sparsity limits the richness of our indicators, th
 
 Using the merged dataset, we compute statewide averages of per-capita crime rates and education staff totals by year.
 
-- **Property crime rates** show a clear downward trend from 2015 to 2021. Average property crime per 100,000 residents declines steadily, suggesting broad improvements in property crime across states.
-- **Violent crime rates** remain relatively stable, with only modest changes over time compared to property crime.
-- **Education staff totals** appear high in 2015 but drop sharply to near-zero levels for later years in the CCD SEA staffing totals. This pattern reflects changes in reporting or classification rather than actual elimination of staff and highlights the limitations of relying on a single aggregate measure.
+- **Property crime rates** exhibit a clear and consistent downward trend from 2015 to 2021. The decline appears in nearly every state, suggesting a broad national shift rather than isolated regional changes.
+- **Violent crime rates** remain comparatively stable. While some states experience localized increases or decreases, the national average shows only modest fluctuations, especially relative to property crime.
+- **Education staff totals** are high only in 2015 and drop to near-zero for 2017, 2019, and 2021. This pattern reflects **reporting discontinuities** in CCD SEA files rather than any real staffing change. Because the SEA aggregates were not consistently reported in later years, the education time series cannot be interpreted as a true temporal trend.
 
-These trends demonstrate that crime rates have generally improved over the time window we study, but the education time series is difficult to interpret due to structural data issues.
+These findings highlight a meaningful improvement in property crime over time, stable violent crime, and substantial limitations in the education data that prevent longitudinal analysis of staffing patterns.
+
+---
 
 ### 4.2 Correlation Patterns
 
 We compute a correlation matrix for the main variables: violent crime rate, property crime rate, homicide rate, robbery rate, aggravated assault rate, and `edu_staff_total`.
 
-- Crime rates are **strongly positively correlated** with one another. For example, aggravated assault rate has a correlation above 0.9 with the overall violent crime rate, and both are moderately correlated with property crime rate. This is expected since they share similar underlying drivers.
-- The education staff total shows **very weak correlations** with crime rates:
+**Internal Crime Correlations**
+- Crime rates are **strongly positively correlated** with one another.  
+  For example, aggravated assault rate correlates above 0.9 with violent crime rate, reflecting the fact that aggravated assault comprises a large share of violent crime.
+- Property crime rate also shows moderate positive correlations with violent crime metrics, consistent with shared socioeconomic and demographic drivers.
+
+**Education–Crime Correlations**
+- The aggregated education staff total exhibits **near-zero correlations** with all crime rates:  
   - Violent crime rate ≈ –0.01  
   - Property crime rate ≈ 0.12  
-  - Robbery and homicide rates also have correlations near zero.
+  - Robbery rate and homicide rate also near zero
 
-In other words, given the available data, we do not observe a strong linear association between total state-level staff counts and crime rates. This does **not** mean education has no relationship with crime; rather, our single aggregated staff measure, combined with state-level aggregation and data quality issues, is not sufficient to capture such relationships.
+Taken at face value, this suggests **no detectable linear association** between total staffing levels and crime rates at the state-year level.  
+
+However, this interpretation is limited by:
+
+1. Structural missingness in staff totals after 2015  
+2. The narrow scope of `edu_staff_total` (one variable describing an entire education system)  
+3. Aggregation at the state-year level, which may obscure more meaningful local or district-level relationships  
+
+Thus, the absence of strong correlations should not be understood as evidence of no relationship between education systems and crime—only that the CCD SEA staffing measure available to us is too sparse and aggregated to capture such patterns.
+
+---
 
 ### 4.3 Geographic Patterns
 
-Although our analysis is primarily numeric, we observe:
+Although our analysis is primarily numeric rather than spatial, several geographic observations emerge:
 
-- States with larger populations (e.g., California, Texas, Florida) naturally have higher crime counts but do not necessarily have the highest crime **rates** once adjusted for population.
-- Many states show parallel declines in property crime, suggesting broader national trends rather than purely local effects.
-- Because education staff totals lack reliable variation after 2015, regional contrasts in education indicators are difficult to interpret.
+- States with the largest populations (e.g., California, Texas, Florida) naturally have the highest **crime counts**, but not necessarily the highest **crime rates** after adjusting for population. Smaller states such as Alaska or New Mexico sometimes exhibit higher per-capita rates.
+- Many states show parallel declines in property crime, suggesting national-level drivers (e.g., economic shifts, policy trends, demographic changes) rather than isolated state policies.
+- Because education staff totals are populated only in 2015, regional comparisons in education staffing are limited. Beyond that year, the SEA files do not provide reliable variation across states.
 
-Taken together, our findings highlight a clear decline in property crime and stable violent crime, but no strong evidence of association between total education staff and crime rates at the state level in this particular dataset.
+Taken together, our findings show:
+
+- A **clear national decline in property crime**,  
+- **Stable violent crime**,  
+- **Consistent internal structure** across crime indicators, and  
+- **No strong evidence of association** between the CCD staffing totals and crime rates given data limitations.
+
+The results underscore the importance of data quality and consistency when studying cross-domain relationships and highlight the need for richer, more granular, and more consistently reported education indicators for future analysis.
 
 ---
 
@@ -212,30 +357,50 @@ Taken together, our findings highlight a clear decline in property crime and sta
 This project is best viewed as a first step toward integrating education and crime data. Several extensions could substantially improve both the robustness and interpretability of the results:
 
 1. **Richer Education Indicators**  
-   Instead of relying solely on staff totals, future work could incorporate:
-   - Enrollment counts and student–teacher ratios (MEMBER and teacher FTE data from additional CCD tables).  
-   - Graduation rates, dropout rates, and test scores from other NCES datasets.  
-   These variables would provide a more direct measure of “education quality” and outcomes.
+   Relying solely on aggregated staff totals limits the ability to draw meaningful conclusions about the education system. Future work could incorporate:
+   - Enrollment counts, student–teacher ratios, and total teacher FTEs from additional CCD tables.  
+   - Performance metrics such as graduation rates, test scores, or attendance from EDFacts or the NCES Digest of Education Statistics.  
+   - Financial indicators (per-pupil expenditure, district funding sources) from the CCD fiscal survey.  
+   Together, these variables would enable a more comprehensive view of how educational capacity and outcomes relate to community contexts.
 
 2. **Socioeconomic Controls**  
-   Crime and education are both influenced by broader structural factors such as income, unemployment, urbanization, racial segregation, and policy differences. Adding state-level covariates from the Census or American Community Survey would enable multivariate modeling and help distinguish direct relationships from confounding.
+   Crime and education both reflect broader structural conditions. To distinguish direct associations from confounding influences, future extensions could integrate state-level covariates such as:
+   - Median income, poverty rate, and unemployment (ACS).  
+   - Urbanization measures and population density.  
+   - Racial and ethnic composition.  
+   - Policy indicators (e.g., education funding formulas, sentencing policy changes).  
+   Incorporating these variables would support multivariate models that better capture the complexity of education–crime relationships.
 
 3. **Finer Spatial Resolution**  
-   State-level aggregation masks important within-state variation. Using county- or district-level data (e.g., UCR county data combined with CCD district files) could reveal spatial clusters where education and crime are more tightly linked.
+   State-level aggregation obscures substantial variation within states. A more granular approach could combine:
+   - County-level UCR crime data.  
+   - District-level CCD staffing and enrollment files.  
+   - Geospatial information (e.g., shapefiles) for spatial clustering analysis.  
+   Such an approach would allow researchers to explore whether localized patterns—rather than statewide averages—drive any observed associations.
 
 4. **Improved Temporal Alignment**  
-   Future work could align school-year and calendar-year data more carefully (for example, by mapping a school year partially across two calendar years or using lagged variables). This might capture delayed effects of education changes on crime rates.
+   Aligning school-year and calendar-year data more precisely would reduce measurement noise. Potential improvements include:
+   - Mapping school years across two calendar years and allocating crime totals accordingly.  
+   - Introducing lag structures (e.g., staffing in year *t* vs. crime in year *t+1*) to reflect possible delayed effects.  
+   - Using rolling averages to smooth out reporting inconsistencies in SEA datasets.  
+   These refinements could yield more stable temporal comparisons and a clearer understanding of longitudinal dynamics.
 
 5. **Causal Modeling and Robustness Checks**  
-   With richer data, one could explore:
-   - Fixed-effects panel regression to control for unobserved state characteristics.  
-   - Difference-in-differences or event-study designs around major policy changes.  
-   - Sensitivity analyses to test how robust findings are to different modeling choices.
+   With richer and more consistent data, future analyses could explore causal frameworks such as:
+   - Fixed-effects or random-effects panel regression to control for unobserved heterogeneity.  
+   - Difference-in-differences designs to examine the effects of major education or policing policy changes.  
+   - Instrumental variables (IV) where plausible instruments exist (e.g., funding shocks).  
+   - Sensitivity analyses and alternative model specifications to assess robustness.  
+   Although such methods are not appropriate given our current data limitations, they represent promising tools for deeper investigation.
 
-6. **Workflow and Documentation Enhancements**  
-   Finally, the computational workflow could be further automated using tools like Snakemake or Makefiles, and the project could be packaged for public reuse (for example, as a reproducible repository with a DOI).
+6. **Improving Data Integration and Provenance Tracking**  
+   Future work could enhance reproducibility and data lineage by:
+   - Constructing a Snakemake or Makefile pipeline for fully automated ETL.  
+   - Storing intermediate outputs with explicit versioning and checksums.  
+   - Using standardized metadata schemas (e.g., DataCite, schema.org) to describe all datasets.  
+   These improvements would strengthen transparency and make the workflow more extensible for ongoing research.
 
-By documenting both what works well and where the data fall short, this project sets up a foundation that can be extended into more detailed, policy-relevant research.
+Overall, expanding the breadth, depth, and temporal consistency of both datasets would enable more rigorous analysis and deeper insights into how education systems and crime patterns co-evolve.
 
 ---
 
@@ -266,6 +431,7 @@ notebooks/
   education_profiling&cleaning.ipynb
   data_integration.ipynb
   analysis.ipynb
+  run_all.sh
 
 ProjectPlan.md
 StatusReport.md
@@ -273,7 +439,6 @@ README.md
 requirements.txt
 ```
 
----
 
 ### 6.2 Obtaining the Raw Data
 
@@ -287,7 +452,6 @@ Place it into:
 
 data/raw/crime_data/
 
----
 
 #### Education Data (NCES CCD SEA)
 
@@ -309,13 +473,13 @@ data/raw/education_data/23-24/
 
 The notebook handles extraction.
 
----
 
 ### 6.3 Running the Workflow
 
 Run the notebooks **in order**:
 
----
+Bash file ca be found in notebook/run_all.sh
+
 
 #### 1. Education Profiling & Cleaning  
 File: `notebooks/education_profiling&cleaning.ipynb`
@@ -331,7 +495,6 @@ This step:
 
 data/cleaned/education_cleaned.csv
 
----
 
 #### 2. Crime Profiling & Cleaning  
 File: `notebooks/crime_profiling&cleaning.ipynb`
@@ -344,7 +507,6 @@ File: `notebooks/crime_profiling&cleaning.ipynb`
 
 data/cleaned/crime_cleaned.csv
 
----
 
 #### 3. Data Integration  
 File: `notebooks/data_integration.ipynb`
@@ -358,7 +520,6 @@ File: `notebooks/data_integration.ipynb`
 
 data/cleaned/merged.csv
 
----
 
 #### 4. Analysis & Visualization  
 File: `notebooks/analysis.ipynb`
@@ -372,6 +533,8 @@ File: `notebooks/analysis.ipynb`
 ---
 
 ### 6.4 Expected Outputs
+
+**Access Output Data:** https://uofi.box.com/s/0d68jriwp8o4273kxa7worrkrsfixkhw
 
 After running all notebooks, you should have:
 
@@ -392,10 +555,39 @@ Notebooks produce all figures and summary tables used in the report.
 - NCES Common Core of Data – State Education Agency Files  
   https://nces.ed.gov/ccd/data_tables.asp  
 
-- McKinney, W. (2010). *Data Structures for Statistical Computing in Python*.  
+- McKinney, W. (2010). *Data Structures for Statistical Computing in Python*.
 
 - Hunter, J. D. (2007). *Matplotlib: A 2D Graphics Environment*.  
 
 - Waskom, M. (2020). *seaborn: statistical data visualization*.  
 
 ---
+
+## Appendix — Metadata / Data Dictionary
+
+### Metadata Summary for Merged Dataset
+
+Below is the data dictionary for `merged.csv`, which contains **204 state-year observations**.
+
+| Column                   | Type   | Description                                                       |
+|--------------------------|--------|-------------------------------------------------------------------|
+| `year`                   | int    | Calendar year of observation (2015, 2017, 2019, 2021).           |
+| `state_abbr`             | string | Two-letter USPS state abbreviation.                              |
+| `state`                  | string | Uppercase state name used as join key.                           |
+| `population`             | int    | Estimated state population from FBI SRS.                         |
+| `violent_crime`          | int    | Total violent crimes (FBI definition).                           |
+| `homicide`               | int    | Murder and non-negligent manslaughter.                           |
+| `robbery`                | int    | Total robberies.                                                 |
+| `aggravated_assault`     | int    | Total aggravated assaults.                                       |
+| `property_crime`         | int    | Total property crimes.                                           |
+| `burglary`               | int    | Burglary offenses.                                               |
+| `larceny`                | int    | Larceny-theft offenses.                                          |
+| `motor_vehicle_theft`    | int    | Motor vehicle theft offenses.                                    |
+| `violent_crime_rate`     | float  | Violent crimes per 100,000 residents.                            |
+| `property_crime_rate`    | float  | Property crimes per 100,000 residents.                           |
+| `homicide_rate`          | float  | Homicides per 100,000 residents.                                 |
+| `robbery_rate`           | float  | Robberies per 100,000 residents.                                 |
+| `aggravated_assault_rate`| float  | Aggravated assaults per 100,000 residents.                       |
+| `edu_staff_total`        | float  | Aggregated SEA staffing totals for each state-year.              |
+
+This schema reflects the final integrated dataset used in analysis and supports consistent interpretation and reuse.
