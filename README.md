@@ -439,7 +439,6 @@ README.md
 requirements.txt
 ```
 
----
 
 ### 6.2 Obtaining the Raw Data
 
@@ -453,7 +452,6 @@ Place it into:
 
 data/raw/crime_data/
 
----
 
 #### Education Data (NCES CCD SEA)
 
@@ -475,7 +473,6 @@ data/raw/education_data/23-24/
 
 The notebook handles extraction.
 
----
 
 ### 6.3 Running the Workflow
 
@@ -483,7 +480,6 @@ Run the notebooks **in order**:
 
 Bash file ca be found in notebook/run_all.sh
 
----
 
 #### 1. Education Profiling & Cleaning  
 File: `notebooks/education_profiling&cleaning.ipynb`
@@ -499,7 +495,6 @@ This step:
 
 data/cleaned/education_cleaned.csv
 
----
 
 #### 2. Crime Profiling & Cleaning  
 File: `notebooks/crime_profiling&cleaning.ipynb`
@@ -512,7 +507,6 @@ File: `notebooks/crime_profiling&cleaning.ipynb`
 
 data/cleaned/crime_cleaned.csv
 
----
 
 #### 3. Data Integration  
 File: `notebooks/data_integration.ipynb`
@@ -526,7 +520,6 @@ File: `notebooks/data_integration.ipynb`
 
 data/cleaned/merged.csv
 
----
 
 #### 4. Analysis & Visualization  
 File: `notebooks/analysis.ipynb`
