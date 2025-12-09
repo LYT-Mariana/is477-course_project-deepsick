@@ -207,51 +207,88 @@ Despite these constraints, the merged dataset offers a reproducible and transpar
 
 ### 3.1 Crime Data Quality
 
-The crime dataset is relatively clean and complete for the years we analyze:
+Overall, the FBI crime dataset is comparatively clean and reliable for quantitative analysis. Most core variables exhibit high completeness and clear semantic definitions:
 
-- Core columns (`population`, `violent_crime`, `property_crime`, `homicide`, `robbery`, `aggravated_assault`, `burglary`, `larceny`, `motor_vehicle_theft`) have **0% missing values**.
-- The `caveats` column is 97% missing and carries only textual notes, so it is removed.
-- `rape_legacy` and `rape_revised` have mutually exclusive coverage due to definitional changes in the FBI’s rape reporting; to avoid inconsistent series, we drop them and rely on `violent_crime` instead.
-- 38 records have missing `state_name`, corresponding to national totals or improperly coded rows; these are dropped.
-- After restricting to 50 states + D.C. and years 2015–2024, the dataset contains 357 rows. Restricting further to the overlapping years with education data yields 204 rows.
+- Core columns (`population`, `violent_crime`, `property_crime`, `homicide`, `robbery`, `aggravated_assault`, `burglary`, `larceny`, `motor_vehicle_theft`) have **0% missing values** for the years we analyze.
+- The `caveats` column is **97% missing** and contains heterogeneous textual notes rather than structured information; it is removed.
+- `rape_legacy` and `rape_revised` exhibit **mutually exclusive reporting** due to the FBI’s definitional transition starting in 2013. Because states adopt the revised definition at different times, keeping either field would produce inconsistent series. We drop both and rely on the broader and consistently defined `violent_crime` category.
+- 38 rows contain missing `state_name`, corresponding to national totals, empty rows, or administrative artifacts. These are dropped to avoid double-counting and ensure each row corresponds to one identifiable jurisdiction.
 
-We detect no duplicated state–year combinations and no impossible values (e.g., negative crime counts). Per-capita rate calculations use population as the denominator and therefore rely on the FBI’s population estimates, which may have their own model-based uncertainty but are standard for cross-state comparisons.
+After cleaning and restricting to the 50 states + D.C. and years 2015–2021, the dataset contains 357 valid records; intersecting with education years yields **204 state-year rows**.
+
+**Data Validity and Structural Checks**  
+- We detect **no duplicated state–year pairs**, ensuring stable joins.
+- No negative crime counts or population values appear.
+- All per-capita crime rates are computed using the FBI’s population estimates, which are themselves model-based and may introduce uncertainty, but these denominators are standard for comparative criminological analysis.
+
+**Remaining Limitations**  
+- FBI reporting is voluntary at the agency level, and some states may have fluctuating participation over time.  
+- State-level aggregates can therefore reflect reporting coverage as much as actual crime incidence.
+
+These limitations prevent causal interpretation but do not materially harm descriptive, cross-sectional comparisons.
+
+---
 
 ### 3.2 Education Data Quality
 
-Education data quality is more challenging:
+The NCES SEA staffing data present substantial data quality challenges due to heterogeneity in reporting practices across states and years.
 
-- The merged SEA dataset includes **57 state codes**, covering the 50 states, D.C., and multiple territories and specialized agencies (e.g., Bureau of Indian Education, Department of Defense Education Activity).
-- Many columns represent detailed race-by-grade staff counts that are only reported for some states or years. Over **95% of columns** have more than 95% missing values.
-- Core identifier fields (`STABR`, `STATENAME`) and aggregated staff counts (`STAFF`) are significantly more complete.
-- We address this by dropping all high-missing columns and focusing on the more robust aggregated staff totals.
+**Key Quality Issues Identified:**
 
-Residual limitations remain:
+- The merged dataset includes **57 distinct agency codes**, combining states, territories, and special agencies (e.g., Bureau of Indian Education). Only 51 correspond to our target state-level units.
+- Of 357 columns, **341 (95%+) exhibit over 95% missingness**, largely representing fine-grained race × grade × gender staffing counts reported inconsistently across jurisdictions.
+- Core identifiers (`STABR`, `STATENAME`) are well populated, as are several high-level staffing counts (e.g., `STAFF`, `SECTCH`, `ELMTCH`), but many totals differ in definition depending on the state.
 
-- Some staff totals are zero for later years, likely reflecting changes in reporting or suppression rather than true absence of staff.
-- The SEA files capture state education agencies, which may not map perfectly onto district-level staffing; however, they still provide a reasonable proxy for statewide staff capacity.
-- Because we rely only on a single staffing indicator (`edu_staff_total`), our education representation is narrow and does not include enrollment or graduation rate.
+**Cleaning Actions and Justification**  
+To ensure comparability:
 
-Despite these limitations, our final education dataset is structurally consistent and sufficient for basic association analysis.
+- All high-missing and inconsistently defined variables are removed.
+- Only aggregated staffing totals with stable reporting across all years are retained.
+- Territories and special agencies are excluded.
+- A derived numeric `year` variable is added to ensure temporal alignment.
+
+**Residual Limitations**
+
+Despite cleaning, several quality concerns remain:
+
+1. **Zero Staff Totals**  
+   Some states report `STAFF = 0` in survey years 2017, 2019, or 2021. These values do **not** represent true zero staffing; instead, they result from SEA-level reporting omission or suppression. They function as **structural missing values** and should be interpreted accordingly.
+
+2. **Reporting Inconsistency Across States**  
+   SEA staffing definitions differ subtly across states (e.g., inclusion/exclusion of contracted personnel), reducing the semantic comparability of staff totals.
+
+3. **Limited Variable Breadth**  
+   Because only `edu_staff_total` is sufficiently complete, our representation of education systems is narrow. Staffing context such as enrollment, student–teacher ratios, or administrative breakdowns cannot be analyzed.
+
+Even with these limitations, the cleaned dataset maintains internal consistency, allowing for meaningful descriptive comparisons at the state-year level.
+
+---
 
 ### 3.3 Integration Quality
 
-Integration quality is evaluated along three dimensions:
+We evaluate integration quality along three dimensions: identifier alignment, temporal consistency, and completeness after merging.
 
-1. **Key Alignment**  
-   - State names are normalized to uppercase across both datasets.
-   - Territories and non-state agencies are removed in both data sources.
-   - After filtering, we obtain a perfect set of 51 unique states (including D.C.) in both datasets.
+#### **1. Identifier Alignment**
+- State names and abbreviations are normalized to uppercase across both datasets.
+- All non-state entities (e.g., territories, specialized agencies) are removed.
+- After filtering, both datasets contain **exactly 51 states** (50 states + D.C.), enabling a consistent one-to-one join structure.
 
-2. **Temporal Consistency**  
-   - FBI data are reported by calendar year, while CCD SEA data use survey years. We map SEA folder names (e.g., “15-16”) to the starting calendar year (2015), which is a reasonable approximation for annual comparisons.
-   - We only use years that appear in both datasets: 2015, 2017, 2019, 2021.
+#### **2. Temporal Consistency**
+- FBI data follow calendar years; NCES SEA data follow survey years (e.g., “2015–2016”).  
+  We consistently map survey-year folders to the **first calendar year** (e.g., `15-16 → 2015`), which is appropriate given the annual granularity of our analysis.
+- We restrict attention to the intersection of available years: **2015, 2017, 2019, 2021**, all of which appear in both datasets.
 
-3. **Missingness After Merge**  
-   - The merged dataset contains no missing values in the variables we use for analysis.
-   - We confirm that there is exactly one row per state-year combination.
+#### **3. Missingness After Merge**
+- The merged dataset contains **no missing values** in the retained fields.
+- We verify that each state-year pair appears exactly once.
+- The final dataset contains **204 rows** (51 states × 4 years), forming a complete, rectangular panel.
 
-Overall, while education data sparsity limits the richness of our indicators, the integrated dataset is internally consistent and suitable for exploratory analysis of associations between crime and staffing totals.
+**Integration Limitations**
+- The education data’s structural zeros propagate into the merged dataset, constraining interpretation of cross-year trends.
+- Because only four years overlap, the integrated dataset represents **discrete snapshots** rather than a continuous time series.
+- Differences in how federal agencies define and aggregate indicators may introduce subtle interoperability issues.
+
+Overall, while education data sparsity limits the analytic depth, the merged dataset is internally consistent, well-aligned across keys and years, and suitable for transparent exploratory analysis.
 
 ---
 
