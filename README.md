@@ -357,30 +357,50 @@ The results underscore the importance of data quality and consistency when study
 This project is best viewed as a first step toward integrating education and crime data. Several extensions could substantially improve both the robustness and interpretability of the results:
 
 1. **Richer Education Indicators**  
-   Instead of relying solely on staff totals, future work could incorporate:
-   - Enrollment counts and student–teacher ratios (MEMBER and teacher FTE data from additional CCD tables).  
-   - Graduation rates, dropout rates, and test scores from other NCES datasets.  
-   These variables would provide a more direct measure of “education quality” and outcomes.
+   Relying solely on aggregated staff totals limits the ability to draw meaningful conclusions about the education system. Future work could incorporate:
+   - Enrollment counts, student–teacher ratios, and total teacher FTEs from additional CCD tables.  
+   - Performance metrics such as graduation rates, test scores, or attendance from EDFacts or the NCES Digest of Education Statistics.  
+   - Financial indicators (per-pupil expenditure, district funding sources) from the CCD fiscal survey.  
+   Together, these variables would enable a more comprehensive view of how educational capacity and outcomes relate to community contexts.
 
 2. **Socioeconomic Controls**  
-   Crime and education are both influenced by broader structural factors such as income, unemployment, urbanization, racial segregation, and policy differences. Adding state-level covariates from the Census or American Community Survey would enable multivariate modeling and help distinguish direct relationships from confounding.
+   Crime and education both reflect broader structural conditions. To distinguish direct associations from confounding influences, future extensions could integrate state-level covariates such as:
+   - Median income, poverty rate, and unemployment (ACS).  
+   - Urbanization measures and population density.  
+   - Racial and ethnic composition.  
+   - Policy indicators (e.g., education funding formulas, sentencing policy changes).  
+   Incorporating these variables would support multivariate models that better capture the complexity of education–crime relationships.
 
 3. **Finer Spatial Resolution**  
-   State-level aggregation masks important within-state variation. Using county- or district-level data (e.g., UCR county data combined with CCD district files) could reveal spatial clusters where education and crime are more tightly linked.
+   State-level aggregation obscures substantial variation within states. A more granular approach could combine:
+   - County-level UCR crime data.  
+   - District-level CCD staffing and enrollment files.  
+   - Geospatial information (e.g., shapefiles) for spatial clustering analysis.  
+   Such an approach would allow researchers to explore whether localized patterns—rather than statewide averages—drive any observed associations.
 
 4. **Improved Temporal Alignment**  
-   Future work could align school-year and calendar-year data more carefully (for example, by mapping a school year partially across two calendar years or using lagged variables). This might capture delayed effects of education changes on crime rates.
+   Aligning school-year and calendar-year data more precisely would reduce measurement noise. Potential improvements include:
+   - Mapping school years across two calendar years and allocating crime totals accordingly.  
+   - Introducing lag structures (e.g., staffing in year *t* vs. crime in year *t+1*) to reflect possible delayed effects.  
+   - Using rolling averages to smooth out reporting inconsistencies in SEA datasets.  
+   These refinements could yield more stable temporal comparisons and a clearer understanding of longitudinal dynamics.
 
 5. **Causal Modeling and Robustness Checks**  
-   With richer data, one could explore:
-   - Fixed-effects panel regression to control for unobserved state characteristics.  
-   - Difference-in-differences or event-study designs around major policy changes.  
-   - Sensitivity analyses to test how robust findings are to different modeling choices.
+   With richer and more consistent data, future analyses could explore causal frameworks such as:
+   - Fixed-effects or random-effects panel regression to control for unobserved heterogeneity.  
+   - Difference-in-differences designs to examine the effects of major education or policing policy changes.  
+   - Instrumental variables (IV) where plausible instruments exist (e.g., funding shocks).  
+   - Sensitivity analyses and alternative model specifications to assess robustness.  
+   Although such methods are not appropriate given our current data limitations, they represent promising tools for deeper investigation.
 
-6. **Workflow and Documentation Enhancements**  
-   Finally, the computational workflow could be further automated using tools like Snakemake or Makefiles, and the project could be packaged for public reuse (for example, as a reproducible repository with a DOI).
+6. **Improving Data Integration and Provenance Tracking**  
+   Future work could enhance reproducibility and data lineage by:
+   - Constructing a Snakemake or Makefile pipeline for fully automated ETL.  
+   - Storing intermediate outputs with explicit versioning and checksums.  
+   - Using standardized metadata schemas (e.g., DataCite, schema.org) to describe all datasets.  
+   These improvements would strengthen transparency and make the workflow more extensible for ongoing research.
 
-By documenting both what works well and where the data fall short, this project sets up a foundation that can be extended into more detailed, policy-relevant research.
+Overall, expanding the breadth, depth, and temporal consistency of both datasets would enable more rigorous analysis and deeper insights into how education systems and crime patterns co-evolve.
 
 ---
 
@@ -411,6 +431,7 @@ notebooks/
   education_profiling&cleaning.ipynb
   data_integration.ipynb
   analysis.ipynb
+  run_all.sh
 
 ProjectPlan.md
 StatusReport.md
@@ -459,6 +480,8 @@ The notebook handles extraction.
 ### 6.3 Running the Workflow
 
 Run the notebooks **in order**:
+
+Bash file ca be found in notebook/run_all.sh
 
 ---
 
