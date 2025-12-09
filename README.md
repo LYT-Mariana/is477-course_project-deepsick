@@ -392,10 +392,39 @@ Notebooks produce all figures and summary tables used in the report.
 - NCES Common Core of Data – State Education Agency Files  
   https://nces.ed.gov/ccd/data_tables.asp  
 
-- McKinney, W. (2010). *Data Structures for Statistical Computing in Python*.  
+- McKinney, W. (2010). *Data Structures for Statistical Computing in Python*.
 
 - Hunter, J. D. (2007). *Matplotlib: A 2D Graphics Environment*.  
 
 - Waskom, M. (2020). *seaborn: statistical data visualization*.  
 
 ---
+
+## Appendix — Metadata / Data Dictionary
+
+### Metadata Summary for Merged Dataset
+
+Below is the data dictionary for `merged.csv`, which contains **204 state-year observations**.
+
+| Column                   | Type   | Description                                                       |
+|--------------------------|--------|-------------------------------------------------------------------|
+| `year`                   | int    | Calendar year of observation (2015, 2017, 2019, 2021).           |
+| `state_abbr`             | string | Two-letter USPS state abbreviation.                              |
+| `state`                  | string | Uppercase state name used as join key.                           |
+| `population`             | int    | Estimated state population from FBI SRS.                         |
+| `violent_crime`          | int    | Total violent crimes (FBI definition).                           |
+| `homicide`               | int    | Murder and non-negligent manslaughter.                           |
+| `robbery`                | int    | Total robberies.                                                 |
+| `aggravated_assault`     | int    | Total aggravated assaults.                                       |
+| `property_crime`         | int    | Total property crimes.                                           |
+| `burglary`               | int    | Burglary offenses.                                               |
+| `larceny`                | int    | Larceny-theft offenses.                                          |
+| `motor_vehicle_theft`    | int    | Motor vehicle theft offenses.                                    |
+| `violent_crime_rate`     | float  | Violent crimes per 100,000 residents.                            |
+| `property_crime_rate`    | float  | Property crimes per 100,000 residents.                           |
+| `homicide_rate`          | float  | Homicides per 100,000 residents.                                 |
+| `robbery_rate`           | float  | Robberies per 100,000 residents.                                 |
+| `aggravated_assault_rate`| float  | Aggravated assaults per 100,000 residents.                       |
+| `edu_staff_total`        | float  | Aggregated SEA staffing totals for each state-year.              |
+
+This schema reflects the final integrated dataset used in analysis and supports consistent interpretation and reuse.
