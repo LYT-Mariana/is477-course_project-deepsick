@@ -10,97 +10,87 @@
 ### 1.1 Project Introduction
 This project investigates how state-level education characteristics relate to crime rates across the United States. We integrate two official federal datasets—the FBI Uniform Crime Reporting (UCR) **Summary Reporting System (SRS)** and the National Center for Education Statistics (NCES) **Common Core of Data (CCD) SEA state-level files**—to construct a reproducible dataset that links crime metrics with public-school staffing indicators for each state and year.
 
-Our motivation is that education and public safety are deeply connected aspects of social well-being, yet they are often addressed separately in policy and public debate. Educational opportunities, staffing levels, and school resources can shape community stability, while crime affects both student outcomes and local school systems. Rather than making causal claims, our goal is to provide a transparent, data-driven view of how these systems move together over time.
+Our motivation is that education and public safety are deeply connected aspects of social well-being, yet they are often addressed separately in policy and public debate. Educational opportunities, staffing levels, and school resources can influence community stability, while crime affects both student outcomes and local school systems. Rather than making causal claims, our goal is to provide a transparent, data-driven view of how these systems move together over time.
 
-The analysis focuses on the overlapping years **2015, 2017, 2019, and 2021**, which are the only years where both FBI and NCES data are simultaneously available after cleaning. For each state and year, we derive per-capita crime rates (e.g., violent crimes per 100,000 residents) and aggregate education staff totals. We then compute descriptive statistics, visualize temporal trends, and examine pairwise correlations to see whether differences in education indicators correspond to differences in violent and property crime rates.
+The analysis focuses on the overlapping years **2015, 2017, 2019, and 2021**, which are the only years where both FBI and NCES data are simultaneously available after cleaning. Because the CCD SEA files contain more than 350 staffing subcategories—over **95% of which exhibit extreme missingness or inconsistent reporting across states and years**—we retain only the consistently reported aggregate indicator `edu_staff_total` as our education variable. This decision is documented and justified to maintain comparability and interpretability across years.
+
+For each state and year, we derive per-capita crime rates (e.g., violent crimes per 100,000 residents) and education staff totals. We then compute descriptive statistics, visualize temporal trends, and examine pairwise correlations to see whether differences in education indicators correspond to differences in violent and property crime rates.
+
+To clarify the analytical scope, we frame our study around the following descriptive research questions:
+
+- How do violent and property crime rates vary across states and over time?
+- How do education staffing levels vary across states and across years?
+- Are higher staffing levels associated with lower per-capita crime rates?
+- How stable or noisy are these associations across the four overlapping years?
 
 Our main contributions are:
 
 - A **cleaned crime dataset** derived from the FBI SRS file, with territories removed and standardized per-capita crime metrics.
-- A **cleaned education dataset** from the CCD SEA state files, aggregating staffing indicators into a single, consistently reported measure (`edu_staff_total`).
-- A **merged state-year dataset** (`data/merged.csv`) covering 204 state-year observations across four years.
-- A set of **Python notebooks** that implement the full workflow: profiling, cleaning, integration, and exploratory analysis.
-- A transparent discussion of data quality issues and limitations, especially the sparsity and definitional complexity of education data.
+- A **cleaned education dataset** from the CCD SEA files, aggregating multiple staffing tables into a single, consistently reported measure (`edu_staff_total`).
+- A **merged state-year dataset** (`data/merged.csv`) containing 204 state-year observations across four years.
+- A set of **Python notebooks** that implement the full workflow: profiling, cleaning, integration, documentation, and exploratory analysis.
+- A transparent discussion of data quality issues and limitations, especially the sparsity, definitional variation, and reporting differences in education data.
 
-Throughout the project we emphasize association rather than causation. We frame our research questions around patterns and correlations: Do states with higher staffing levels show lower crime rates? How have crime rates and staff totals moved over time? Are there clear regional differences? By making our workflow and assumptions explicit, the project aims to support informed interpretation and future extensions rather than definitive policy prescriptions.
+Throughout the project we emphasize association rather than causation. Administrative datasets such as SRS and CCD reflect reporting processes that vary across jurisdictions, and observed patterns may be shaped by confounding factors such as socioeconomic conditions or policy differences. By making our workflow and assumptions explicit, the project aims to support informed interpretation and future extensions rather than definitive policy prescriptions.
+
+---
 
 ### 1.2 Ethical, Privacy, and Legal Considerations
 
 Both the FBI SRS and NCES CCD SEA datasets are **public, aggregate, non-PII datasets**, meaning they contain no personal identifiers and pose minimal privacy risk. Nonetheless, ethical and legal considerations remain important.
 
-
 #### **Data Licensing and Terms of Use**
-
-- **FBI Crime Data Explorer** provides downloadable datasets intended for public use, subject to attribution and use within reasonable analytical contexts.
-- **NCES CCD data** are governed by the Department of Education, which permits reuse for statistical and research purposes.  
-  We adhere to these terms by maintaining attribution, avoiding any attempt to re-identify individuals, and using the datasets solely for educational research.
-
+- **FBI Crime Data Explorer** provides downloadable datasets for public analytical use with attribution.
+- **NCES CCD** authorizes reuse for statistical and research purposes.  
+  We adhere to these terms by maintaining attribution, avoiding re-identification attempts, and limiting use to educational analysis.
 
 #### **Representation and Bias**
+Although both datasets are authoritative, they contain structural biases:
+- FBI crime statistics depend on voluntary reporting by law enforcement, which varies across agencies and years.
+- CCD education staffing data are not uniformly reported; in several years, aggregate staff totals for some states appear as zero due to incomplete SEA reporting rather than an actual absence of staff.
 
-Although both datasets are official and comprehensive, they contain structural biases:
-
-- FBI reporting depends on local law enforcement agencies’ participation, which varies by state and year.
-- Education staffing data show inconsistencies in reporting practices, and many demographic breakdowns are missing for most states.
-
-We explicitly avoid causal claims and acknowledge that measurement artifacts may influence observed patterns.
-
+These issues introduce noise into the merged dataset, and we explicitly avoid causal interpretations that could misrepresent the underlying social systems.
 
 #### **Data Quality and Transparency**
-
-All cleaning decisions (e.g., dropping high-missing columns, removing territories, aggregating staff totals)  
-are documented in notebooks and justified in this report.
-
-We preserve raw files to support full auditability.
-
+All cleaning decisions (e.g., dropping high-missing columns, removing territories, aggregating staff totals) are documented in notebooks and justified in this report. Raw files are preserved to ensure full auditability and reproducibility.
 
 #### **Provenance and Reproducibility**
+- Each NCES row contains a `source_file` tag indicating the ZIP archive from which it originated.
+- All transformations are scripted in Jupyter notebooks to ensure the workflow can be repeated deterministically from the raw data.
 
-- Each NCES row includes its origin ZIP file as a `source_file` tag, ensuring traceability.
-- All transformation steps are scripted in notebooks, and the workflow can be reproduced with the provided instructions.
+Overall, this project prioritizes transparent decision-making, responsible use of public data, and clear communication of limitations.
 
-
-**Overall, this project prioritizes transparency, responsible use of public data, and clear communication of limitations.**
-
+---
 
 ### 1.3 Data Lifecycle Framework
 
 This project follows the **Wiggins & Vanderhoof Data Lifecycle Model**, which structures data work into six iterative stages: *Plan, Acquire, Process, Analyze, Preserve,* and *Share*. Aligning our workflow to this model ensures transparency, methodological consistency, and reproducibility.
 
-
 #### **Plan**
-We begin by defining the research scope: analyzing associations between education staffing indicators and crime rates across U.S. states. This determines our data needs—state-level crime statistics from the FBI SRS and staff-level education data from the NCES CCD SEA files.
-
+We begin by defining the research scope: analyzing associations between education staffing indicators and crime rates across U.S. states. This guides our selection of authoritative federal datasets with nationwide, annually reported indicators.
 
 #### **Acquire**
-Data are obtained from two authoritative federal sources.
+Data are obtained from two trustworthy government sources:
+- The FBI SRS dataset (CSV)
+- NCES CCD SEA staffing files (ZIP archives containing CSVs)
 
-- FBI data are downloaded as a single CSV containing annual crime statistics.  
-- NCES CCD SEA data consist of multiple ZIP archives per year, each containing staffing tables.
-
-We preserve the raw files in `data/raw/` without modification to maintain provenance.
-
+Raw files are stored verbatim under `data/raw/` to preserve provenance and ensure reproducibility.
 
 #### **Process**
-Both datasets undergo structured profiling and cleaning.
+Both datasets undergo detailed profiling and structured cleaning:
+- FBI data require removal of invalid rows, territories, and inconsistent fields such as legacy/revised rape categories.
+- NCES data require multi-year extraction, consolidation across 350+ columns, removal of columns with extreme missingness, normalization of state identifiers, and aggregation into a consistent `edu_staff_total` measure.
 
-- FBI data require removal of invalid rows, territories, and inconsistent fields such as legacy/revised rape categories.  
-- NCES data require extraction, consolidation across years, removal of 95%+ missing columns, filtering to valid state entries, and construction of a consistent `edu_staff_total` variable.  
-  All transformations are implemented in Jupyter notebooks to allow step-by-step verification.
-
+These transformations are scripted step-by-step, and each step is idempotent to guarantee repeatability.
 
 #### **Analyze**
-We integrate both datasets on `state` and `year`, compute per-capita crime metrics, and generate descriptive summaries, time series plots, and correlation matrices. Analyses follow an exploratory approach focused on association rather than prediction or causation.
-
+We integrate the crime and education datasets on `state` and `year`, compute per-capita crime metrics, and generate descriptive summaries, time series plots, and correlation matrices. Due to the limited number of overlapping years, analysis remains exploratory and descriptive rather than inferential.
 
 #### **Preserve**
-All cleaned datasets are saved to `data/cleaned/`, accompanied by metadata and documentation.  
-Intermediate artifacts (profiling output, figures, merged datasets) are versioned through the Git repository.
-
+Cleaned datasets are stored under `data/cleaned/` with accompanying metadata. Figures, intermediate outputs, and notebooks are version-controlled through the Git repository.
 
 #### **Share**
-The final deliverables include notebooks, cleaned data files, and this README as a complete, reproducible package.  
-All code and documentation follow open, transparent principles that enable users to repeat the workflow end-to-end.
+The final deliverables include cleaned data, transformation scripts, and this README, forming a complete, reproducible workflow that others can re-run end-to-end.
 
 ---
 
