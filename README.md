@@ -298,33 +298,57 @@ Overall, while education data sparsity limits the analytic depth, the merged dat
 
 Using the merged dataset, we compute statewide averages of per-capita crime rates and education staff totals by year.
 
-- **Property crime rates** show a clear downward trend from 2015 to 2021. Average property crime per 100,000 residents declines steadily, suggesting broad improvements in property crime across states.
-- **Violent crime rates** remain relatively stable, with only modest changes over time compared to property crime.
-- **Education staff totals** appear high in 2015 but drop sharply to near-zero levels for later years in the CCD SEA staffing totals. This pattern reflects changes in reporting or classification rather than actual elimination of staff and highlights the limitations of relying on a single aggregate measure.
+- **Property crime rates** exhibit a clear and consistent downward trend from 2015 to 2021. The decline appears in nearly every state, suggesting a broad national shift rather than isolated regional changes.
+- **Violent crime rates** remain comparatively stable. While some states experience localized increases or decreases, the national average shows only modest fluctuations, especially relative to property crime.
+- **Education staff totals** are high only in 2015 and drop to near-zero for 2017, 2019, and 2021. This pattern reflects **reporting discontinuities** in CCD SEA files rather than any real staffing change. Because the SEA aggregates were not consistently reported in later years, the education time series cannot be interpreted as a true temporal trend.
 
-These trends demonstrate that crime rates have generally improved over the time window we study, but the education time series is difficult to interpret due to structural data issues.
+These findings highlight a meaningful improvement in property crime over time, stable violent crime, and substantial limitations in the education data that prevent longitudinal analysis of staffing patterns.
+
+---
 
 ### 4.2 Correlation Patterns
 
 We compute a correlation matrix for the main variables: violent crime rate, property crime rate, homicide rate, robbery rate, aggravated assault rate, and `edu_staff_total`.
 
-- Crime rates are **strongly positively correlated** with one another. For example, aggravated assault rate has a correlation above 0.9 with the overall violent crime rate, and both are moderately correlated with property crime rate. This is expected since they share similar underlying drivers.
-- The education staff total shows **very weak correlations** with crime rates:
+**Internal Crime Correlations**
+- Crime rates are **strongly positively correlated** with one another.  
+  For example, aggravated assault rate correlates above 0.9 with violent crime rate, reflecting the fact that aggravated assault comprises a large share of violent crime.
+- Property crime rate also shows moderate positive correlations with violent crime metrics, consistent with shared socioeconomic and demographic drivers.
+
+**Education–Crime Correlations**
+- The aggregated education staff total exhibits **near-zero correlations** with all crime rates:  
   - Violent crime rate ≈ –0.01  
   - Property crime rate ≈ 0.12  
-  - Robbery and homicide rates also have correlations near zero.
+  - Robbery rate and homicide rate also near zero
 
-In other words, given the available data, we do not observe a strong linear association between total state-level staff counts and crime rates. This does **not** mean education has no relationship with crime; rather, our single aggregated staff measure, combined with state-level aggregation and data quality issues, is not sufficient to capture such relationships.
+Taken at face value, this suggests **no detectable linear association** between total staffing levels and crime rates at the state-year level.  
+
+However, this interpretation is limited by:
+
+1. Structural missingness in staff totals after 2015  
+2. The narrow scope of `edu_staff_total` (one variable describing an entire education system)  
+3. Aggregation at the state-year level, which may obscure more meaningful local or district-level relationships  
+
+Thus, the absence of strong correlations should not be understood as evidence of no relationship between education systems and crime—only that the CCD SEA staffing measure available to us is too sparse and aggregated to capture such patterns.
+
+---
 
 ### 4.3 Geographic Patterns
 
-Although our analysis is primarily numeric, we observe:
+Although our analysis is primarily numeric rather than spatial, several geographic observations emerge:
 
-- States with larger populations (e.g., California, Texas, Florida) naturally have higher crime counts but do not necessarily have the highest crime **rates** once adjusted for population.
-- Many states show parallel declines in property crime, suggesting broader national trends rather than purely local effects.
-- Because education staff totals lack reliable variation after 2015, regional contrasts in education indicators are difficult to interpret.
+- States with the largest populations (e.g., California, Texas, Florida) naturally have the highest **crime counts**, but not necessarily the highest **crime rates** after adjusting for population. Smaller states such as Alaska or New Mexico sometimes exhibit higher per-capita rates.
+- Many states show parallel declines in property crime, suggesting national-level drivers (e.g., economic shifts, policy trends, demographic changes) rather than isolated state policies.
+- Because education staff totals are populated only in 2015, regional comparisons in education staffing are limited. Beyond that year, the SEA files do not provide reliable variation across states.
 
-Taken together, our findings highlight a clear decline in property crime and stable violent crime, but no strong evidence of association between total education staff and crime rates at the state level in this particular dataset.
+Taken together, our findings show:
+
+- A **clear national decline in property crime**,  
+- **Stable violent crime**,  
+- **Consistent internal structure** across crime indicators, and  
+- **No strong evidence of association** between the CCD staffing totals and crime rates given data limitations.
+
+The results underscore the importance of data quality and consistency when studying cross-domain relationships and highlight the need for richer, more granular, and more consistently reported education indicators for future analysis.
 
 ---
 
