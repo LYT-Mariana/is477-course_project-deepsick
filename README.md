@@ -102,32 +102,34 @@ The final deliverables include cleaned data, transformation scripts, and this RE
 FBI Crime Data Explorer – Summary Reporting System (SRS), downloaded as `estimated_crimes_1979_2024.csv`.
 
 **Coverage and Structure**  
-The raw file contains annual crime statistics for U.S. states, the District of Columbia, and several territories from **1979 to 2024**. Key columns include:
+The raw SRS file provides annual crime counts for U.S. states, the District of Columbia, and several territories from **1979 to 2024**. Key columns include:
 
 - `year` – calendar year of record  
-- `state_abbr` – two-letter state abbreviation  
-- `state_name` – full state name  
+- `state_abbr`, `state_name` – jurisdiction identifiers  
 - `population` – estimated state population  
-- `violent_crime` – total violent crimes  
-- `homicide` – murders and non-negligent manslaughter  
-- `robbery`, `aggravated_assault` – major violent crime categories  
-- `property_crime`, `burglary`, `larceny`, `motor_vehicle_theft` – property crime counts  
-- `caveats`, `rape_legacy`, `rape_revised` – auxiliary or definition-dependent fields  
+- `violent_crime`, `homicide`, `robbery`, `aggravated_assault` – major violent crime categories  
+- `property_crime`, `burglary`, `larceny`, `motor_vehicle_theft` – property crime categories  
+- `caveats`, `rape_legacy`, `rape_revised` – auxiliary or definition-sensitive fields  
 
-After cleaning, we retain **50 states + D.C.** and restrict the period to **2015–2021**, which is sufficient to cover our overlapping years with NCES education data. We compute several derived variables:
+The rape-related fields are dropped because the FBI transitioned from the legacy to revised definition during the 2010s. Many states report only one version, making the two fields **not comparable across states or years**. We keep only fields with complete reporting consistency.
+
+Following cleaning, we retain **50 states + D.C.** and restrict the period to **2015–2021**, matching the years for which education data are available. We compute derived per-capita indicators:
 
 - `violent_crime_rate` = violent_crime / population × 100,000  
 - `property_crime_rate` = property_crime / population × 100,000  
 - `homicide_rate`, `robbery_rate`, `aggravated_assault_rate` defined analogously  
 
-These rates allow meaningful comparisons across states with very different population sizes.
+These standardized rates ensure comparability across states with different population sizes and are stored directly in the cleaned dataset to guarantee reproducible calculations.
+
+**Data Limitations**  
+Crime reporting varies by jurisdiction. The FBI data depend on voluntary participation of state and local agencies, and reporting completeness fluctuates across years. State-level aggregates therefore reflect **administrative reporting patterns**, not necessarily true crime incidence. These limitations motivate our decision to treat the analysis as descriptive rather than causal.
 
 **Use in Analysis**  
-The cleaned crime dataset (saved as `data/cleaned/crime_cleaned.csv`) is used to:
+The cleaned crime dataset (`data/cleaned/crime_cleaned.csv`) is used to:
 
-- Describe state-level crime levels and trends over time.
-- Provide per-capita crime rates for correlation analysis.
-- Serve as the main outcome variables in exploratory regression and visualization.
+- Summarize crime levels and trends across states.  
+- Produce per-capita crime rates for correlation analysis.  
+- Serve as the outcome variables in exploratory visualizations and comparisons.
 
 ---
 
@@ -142,49 +144,62 @@ NCES Common Core of Data – SEA State-Level Nonfiscal Survey Data, downloaded f
 - 2021–2022 (`21-22`)  
 - 2023–2024 (`23-24`)  
 
-Each year’s folder contains two ZIP archives corresponding roughly to **staffing** and **membership** tables. We focus on the SEA staffing files and extract their CSVs programmatically.
+Each survey year includes two ZIP files representing **staffing** and **membership** tables. We extract all staffing CSVs programmatically to ensure transparent and reproducible ingestion.
 
 **Coverage and Structure**  
-The merged raw education dataset contains **62,841 rows** and **357 columns**. Important fields include:
+The merged raw education dataset contains **62,841 rows** and **357 columns**. Relevant variables include:
 
-- `SURVYEAR` – survey year label (e.g., “2015-2016”)  
-- `STABR` – state abbreviation (57 unique values including territories)  
-- `STATENAME` – state name  
-- `STAFF`, `SECTCH`, `ELMTCH`, `SCHSUP`, `STUSUP`, etc. – aggregate counts of teachers and staff  
-- Numerous highly specific race × grade × gender indicators  
+- `SURVYEAR` – survey year label  
+- `STABR`, `STATENAME` – state identifiers (57 unique values including territories)  
+- Staffing totals (`STAFF`, `SECTCH`, `ELMTCH`, `SCHSUP`, `STUSUP`, etc.)  
+- Hundreds of fine-grained race × gender × grade indicators  
 
-Because most of the detailed demographic columns are sparsely populated, we focus on **aggregated staffing totals** that have near-complete coverage. During cleaning we derive a numeric year field (`year`) from the folder name and keep the range **2015–2023**.
+However, **341 out of 357 fields exhibit more than 95% missingness**, and many staffing subcategories are reported only by certain states or only in certain years. These inconsistencies make the majority of variables **not analytically comparable across states or survey years**.
 
-**Cleaning and Core Variable**  
-Due to extreme missingness, 341 out of 357 columns have more than 95% missing values and are dropped. We retain a small set of robust variables and then further narrow to four core columns:
+**Cleaning and Core Variable Selection**  
+To maintain comparability, we drop extremely sparse columns and retain only robust, consistently reported indicators. We derive:
 
 - `state_fips` – numeric state code  
-- `state` – uppercase state name  
-- `edu_staff_total` – total staff count (from `STAFF`)  
-- `year` – derived numeric year  
+- `state` – uppercase state name standardized across years  
+- `edu_staff_total` – aggregated staff count from the `STAFF` column  
+- `year` – numeric year extracted from folder labels (2015–2023)  
 
-We remove rows with missing state, year, or staff totals and filter out territories such as Puerto Rico, Guam, and the Virgin Islands. The resulting cleaned education dataset (`data/cleaned/education_cleaned.csv`) contains **5,786 rows**, which are later aggregated to state-year totals.
+We remove rows with missing state identifiers, missing staff totals, or invalid territories (e.g., Puerto Rico, Guam). The cleaned dataset (`data/cleaned/education_cleaned.csv`) contains **5,786 rows**, which are later aggregated to a single record per state-year.
+
+**Why Only `edu_staff_total` Is Used**  
+Because CCD SEA reporting differs substantially across states, nearly all granular staffing categories are **not consistently defined** or **not consistently reported**. The `STAFF` field is the only aggregated staffing measure that exists across **all states and all years**, making it the only feasible, comparable education variable for our analysis.
+
+**Important Limitation: Zero Staff Totals**  
+In several survey years, some states appear with `edu_staff_total = 0`. These values do **not** indicate an absence of staff; instead, they reflect missing aggregated totals in the SEA files for that year. These zeros therefore behave as **structural missing values** and should be interpreted cautiously.
 
 **Aggregation and Use**  
-We aggregate education data to one record per state and year by summing `edu_staff_total`. This produces **204 state-year observations** for the years **2015, 2017, 2019, and 2021**. The aggregated staff totals serve as our primary education indicator, approximating the staffing capacity of public school systems.
+We aggregate the cleaned education data to one record per state and year by summing `edu_staff_total`. This yields **204 state-year observations** for **2015, 2017, 2019, and 2021**, which serve as our primary education indicator representing the staffing capacity of state public-school systems.
 
 ---
 
 ### 2.3 Integrated Dataset
 
-To study education–crime relationships, we merge the two cleaned datasets:
+To study education–crime relationships, we merge the two cleaned datasets by aligning identifiers and ensuring consistent temporal coverage.
 
-1. Align states: convert all state names to uppercase and restrict both datasets to the 50 states + D.C.  
-2. Align years: intersect the crime and education year sets. The intersection is **{2015, 2017, 2019, 2021}**.  
-3. Aggregate education data to state–year level (`edu_staff_total`).  
-4. Perform an inner join on `state` and `year`.
+**Integration Steps**
 
-The final merged dataset (`data/merged.csv`) has:
+1. **State alignment:** Convert all state names to uppercase and restrict both datasets to the 50 states + D.C.  
+2. **Year alignment:** Take the intersection of available years from each dataset → **{2015, 2017, 2019, 2021}.**  
+3. **Aggregation:** Reduce education data to one state-year record using summed `edu_staff_total`.  
+4. **Merge:** Perform an inner join on `state` and `year`.
+
+**Resulting Dataset**  
+The final merged dataset (`data/merged.csv`) includes:
 
 - **204 rows** (51 states × 4 years)  
-- **18 columns**, including crime counts, per-capita crime rates, population, and `edu_staff_total`.
+- **18 columns**, including population, crime counts, per-capita crime rates, and `edu_staff_total`.
 
-This dataset is the basis for our trend plots, correlation analysis, and summary findings.
+**Integration Limitations**  
+- Only four overlapping survey years exist, producing a **non-continuous time series** for education variables.  
+- Differences in reporting granularity across FBI and NCES systems may introduce alignment noise.  
+- Zero-staff rows inherited from CCD SEA constitute structural missing values that limit interpretability.
+
+Despite these constraints, the merged dataset offers a reproducible and transparent foundation for descriptive analysis of education–crime associations.
 
 ---
 
